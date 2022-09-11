@@ -1,0 +1,30 @@
+[tool.black]
+line-length = 79
+
+[tool.isort]
+skip = [
+    '.gitignore',
+    'env',
+    'venv',
+    ]
+known_local_folder = [
+    'backend/api',
+    'foodgramm',
+    'recipes',
+    'users',
+    ]
+
+[tool.flake8]
+ignore = [
+    'W503',
+    ]
+exclude = [
+    'tests/',
+    '*/migrations/',
+    'venv/',
+    'env/',
+    ]
+per-file-ignores = [
+    '*/settings.py:E501',
+    ]
+max-complexity = 10
