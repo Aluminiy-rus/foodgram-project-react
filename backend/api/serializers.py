@@ -4,7 +4,14 @@ from rest_framework.serializers import CurrentUserDefault
 from rest_framework.validators import UniqueTogetherValidator, ValidationError
 
 from .validators import UsernameNotMeValidator
-from recipes.models import Recipe, Ingredient, Tag, ShoppingCart, Follow, Favourite
+from recipes.models import (
+    Favourite,
+    Follow,
+    Ingredient,
+    Recipe,
+    ShoppingCart,
+    Tag,
+)
 from users.models import User
 
 

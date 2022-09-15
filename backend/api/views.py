@@ -10,7 +10,13 @@ from rest_framework_simplejwt.tokens import AccessToken
 from .mixins import GetPostDelMixin
 from .pagination import ApiPagination
 from .permissions import AuthorOrAdminOrReadOnly, IsAdmin, IsAdminOrReadOnly
-from .serializers import (SignUpSerializer, TokenSerializer, UserSerializer, UserMeSerializer)
+from .serializers import (
+    RecipeSerializer,
+    SignUpSerializer,
+    TokenSerializer,
+    UserMeSerializer,
+    UserSerializer,
+)
 from recipes.models import Recipe
 from users.confirm_code_generator import confirm_code_generator
 from users.models import User
@@ -78,3 +84,19 @@ class UserViewSet(viewsets.ModelViewSet):
             serializer.save()
             return Response(serializer.data)
         return None
+
+
+class RecipeViewSet(viewsets.ModelViewSet):
+    """Вьюсет для отзывов"""
+
+    serializer_class = RecipeSerializer
+    permission_classes = (AuthorOrAdminOrReadOnly,)
+    pagination_class = ApiPagination
+
+    def get_queryset(self):
+        recipe = get_object_or_404(Recipe, pk=self.kwargs.get("recipe_id"))
+        return recipe.reviews.all()
+
+    def perform_create(self, serializer):
+        recipe = get_object_or_404(Recipe, pk=self.kwargs.get("recipe_id"))
+        serializer.save(author=self.request.user, recipe=recipe)

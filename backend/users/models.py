@@ -11,6 +11,7 @@ ROLES = [
 
 class User(AbstractUser):
     """Модель пользователя."""
+
     username = models.CharField(
         verbose_name="Имя пользователя",
         max_length=150,
@@ -36,11 +37,11 @@ class User(AbstractUser):
     )
     role = models.SlugField(choices=ROLES, default=USER)
     REQUIRED_FIELDS = [
-        'username',
-        'password',
-        'first_name',
-        'last_name',
-        'email',
+        "username",
+        "password",
+        "first_name",
+        "last_name",
+        "email",
     ]
 
     class Meta:
