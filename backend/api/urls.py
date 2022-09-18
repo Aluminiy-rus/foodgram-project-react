@@ -2,12 +2,13 @@ from django.urls import include, path
 from rest_framework.routers import DefaultRouter
 
 from .views import (
-    CategoryViewSet,
-    CommentViewSet,
-    GenreViewSet,
-    ReviewViewSet,
+    FavoriteViewSet,
+    IngredientViewSet,
+    RecipeViewSet,
+    ShoppingCartViewSet,
     SignUp,
-    TitleViewSet,
+    FollowViewSet,
+    TagViewSet,
     Token,
     UserViewSet,
 )
@@ -15,23 +16,28 @@ from .views import (
 app_name = "api"
 
 router = DefaultRouter()
-# router.register("categories", CategoryViewSet)
-# router.register("genres", GenreViewSet)
-# router.register("titles", TitleViewSet)
-# router.register(
-#     r"titles/(?P<title_id>\d+)/reviews",
-#     ReviewViewSet,
-#     basename="review",
-# )
-# router.register(
-#     r"titles/(?P<title_id>\d+)/reviews/(?P<review_id>\d+)/comments",
-#     CommentViewSet,
-#     basename="comment",
-# )
 router.register("users", UserViewSet)
+router.register("tags", TagViewSet)
+router.register("recipes", RecipeViewSet)
+router.register(
+    r"recipes/(?P<recipes_id>\d+)/shopping_cart",
+    ShoppingCartViewSet,
+    basename="shopping_cart",
+)
+router.register(
+    r"recipes/(?P<recipes_id>\d+)/favorite",
+    FavoriteViewSet,
+    basename="favorite",
+)
+router.register(
+    r"users/(?P<users_id>\d+)/subscribe",
+    FollowViewSet,
+    basename="subscribe",
+)
+router.register("ingredients", IngredientViewSet)
 
 urlpatterns = [
-    path("v1/auth/signup/", SignUp.as_view(), name="signup"),
-    path("v1/auth/token/", Token.as_view(), name="token"),
-    path("v1/", include(router.urls)),
+    path("/auth/signup/", SignUp.as_view(), name="signup"),
+    path("/auth/token/", Token.as_view(), name="token"),
+    path("/", include(router.urls)),
 ]

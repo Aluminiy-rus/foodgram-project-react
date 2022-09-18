@@ -4,19 +4,26 @@ line-length = 79
 [tool.isort]
 skip = [
     '.gitignore',
+    '.dockerignore',
     'env',
     'venv',
     ]
+extend_skip = [
+    '.md',
+    '.json',
+    ]
 known_local_folder = [
-    'backend/api',
-    'backend/foodgramm',
-    'backend/recipes',
-    'backend/users',
+    'api',
+    'foodgramm',
+    'recipes',
+    'users',
+    'cart',
     ]
 
 [tool.flake8]
 ignore = [
     'W503',
+    'E501',
     ]
 exclude = [
     'tests/',

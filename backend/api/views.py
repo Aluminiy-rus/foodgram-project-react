@@ -7,17 +7,22 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework_simplejwt.tokens import AccessToken
 
-from .mixins import GetPostDelMixin
+from .mixins import GetPostDelMixin, PostDelMixin
 from .pagination import ApiPagination
-from .permissions import AuthorOrAdminOrReadOnly, IsAdmin, IsAdminOrReadOnly
+from .permissions import IsAuthorOrReadOnly
 from .serializers import (
     RecipeSerializer,
     SignUpSerializer,
     TokenSerializer,
-    UserMeSerializer,
+    UserSetPasswordSerializer,
     UserSerializer,
+    FavouriteSerializer,
+    IngredientSerializer,
+    ShoppingCartSerializer,
+    FollowSerializer,
+    TagSerializer,
 )
-from recipes.models import Recipe
+from recipes.models import Recipe, Ingredient, Tag
 from users.confirm_code_generator import confirm_code_generator
 from users.models import User
 
@@ -57,7 +62,7 @@ class UserViewSet(viewsets.ModelViewSet):
     """Вьюсет для пользователей"""
 
     queryset = User.objects.all()
-    permission_classes = [IsAdmin]
+    permission_classes = [AllowAny]
     serializer_class = UserSerializer
     pagination_class = ApiPagination
     filter_backends = [DjangoFilterBackend, filters.SearchFilter]
@@ -65,20 +70,30 @@ class UserViewSet(viewsets.ModelViewSet):
     lookup_field = "username"
 
     @action(
-        methods=["get", "patch"],
+        methods=["get"],
         detail=False,
         url_path="me",
         permission_classes=[IsAuthenticated],
     )
-    def user_me_actions(self, request):
+    def user_me(self, request):
         user = self.request.user
         if request.method == "GET":
-            serializer = UserMeSerializer(user)
+            serializer = UserSerializer(user)
             return Response(serializer.data)
-        if request.method == "PATCH":
+        return None
+
+    @action(
+        methods=["post"],
+        detail=False,
+        url_path="set_password",
+        permission_classes=[IsAuthenticated],
+    )
+    def user_set_password(self, request):
+        if request.method == "POST":
             user = self.request.user
-            serializer = UserMeSerializer(
-                user, data=request.data, partial=True
+            serializer = UserSetPasswordSerializer(
+                user,
+                data=request.data,
             )
             serializer.is_valid(raise_exception=True)
             serializer.save()
@@ -87,16 +102,80 @@ class UserViewSet(viewsets.ModelViewSet):
 
 
 class RecipeViewSet(viewsets.ModelViewSet):
-    """Вьюсет для отзывов"""
+    """Вьюсет для рецептов"""
 
+    queryset = Recipe.objects.all()
+    permission_classes = [IsAuthorOrReadOnly]
     serializer_class = RecipeSerializer
-    permission_classes = (AuthorOrAdminOrReadOnly,)
     pagination_class = ApiPagination
 
+    def perform_create(self, serializer):
+        serializer.save(author=self.request.user)
+
+
+class FavouriteViewSet(PostDelMixin):
+    """Вьюсет для избранного"""
+
+    permission_classes = [IsAuthenticated]
+    serializer_class = FavouriteSerializer
+    filter_backends = (DjangoFilterBackend, filters.SearchFilter)
+    search_fields = ("favourite__username",)
+
     def get_queryset(self):
-        recipe = get_object_or_404(Recipe, pk=self.kwargs.get("recipe_id"))
-        return recipe.reviews.all()
+        user = self.request.user
+        return user.favourite.all()
 
     def perform_create(self, serializer):
-        recipe = get_object_or_404(Recipe, pk=self.kwargs.get("recipe_id"))
-        serializer.save(author=self.request.user, recipe=recipe)
+        serializer.save(user=self.request.user)
+
+    def perform_destroy(self, serializer):
+        serializer.save(user=self.request.user)
+
+
+class IngredientViewSet(viewsets.ReadOnlyModelViewSet):
+    """Вьюсет для ингредиентов"""
+
+    queryset = Ingredient.objects.all()
+    serializer_class = IngredientSerializer
+
+
+class ShoppingCartViewSet(GetPostDelMixin):
+    """Вьюсет для списка покупок"""
+
+    permission_classes = [IsAuthenticated]
+    serializer_class = ShoppingCartSerializer
+    filter_backends = (DjangoFilterBackend, filters.SearchFilter)
+    search_fields = ("shopping_cart__username",)
+
+    def get_queryset(self):
+        user = self.request.user
+        return user.shopping_cart.all()
+
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
+
+    def perform_destroy(self, serializer):
+        serializer.save(user=self.request.user)
+
+
+class FollowViewSet(GetPostDelMixin):
+    """Вьюсет для подписок"""
+
+    permission_classes = [IsAuthenticated]
+    serializer_class = FollowSerializer
+    filter_backends = (DjangoFilterBackend, filters.SearchFilter)
+    search_fields = ("author__username",)
+
+    def get_queryset(self):
+        user = self.request.user
+        return user.follower.all()
+
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
+
+
+class TagViewSet(viewsets.ReadOnlyModelViewSet):
+    """Вьюсет для тэгов"""
+
+    queryset = Tag.objects.all()
+    serializer_class = TagSerializer

@@ -8,3 +8,11 @@ class GetPostDelMixin(
     viewsets.GenericViewSet,
 ):
     pass
+
+
+class PostDelMixin(
+    mixins.CreateModelMixin,
+    mixins.DestroyModelMixin,
+    viewsets.GenericViewSet,
+):
+    pass
