@@ -21,7 +21,8 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "rest_framework",
-    "rest_framework_simplejwt",
+    # "rest_framework_simplejwt",
+    "rest_framework.authtoken",
     "django_filters",
     "api",
     "cart",
@@ -61,17 +62,24 @@ WSGI_APPLICATION = "foodgram.wsgi.application"
 
 
 DATABASES = {
-    "default": {
-        "ENGINE": os.getenv(
-            "DB_ENGINE", default="django.db.backends.postgresql"
-        ),
-        "NAME": os.getenv("DB_NAME", default=None),
-        "USER": os.getenv("POSTGRES_USER", default=None),
-        "PASSWORD": os.getenv("POSTGRES_PASSWORD", default=None),
-        "HOST": os.getenv("DB_HOST", default=None),
-        "PORT": os.getenv("DB_PORT", default=None),
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
     }
 }
+
+# DATABASES = {
+#     "default": {
+#         "ENGINE": os.getenv(
+#             "DB_ENGINE", default="django.db.backends.postgresql"
+#         ),
+#         "NAME": os.getenv("DB_NAME", default=None),
+#         "USER": os.getenv("POSTGRES_USER", default=None),
+#         "PASSWORD": os.getenv("POSTGRES_PASSWORD", default=None),
+#         "HOST": os.getenv("DB_HOST", default=None),
+#         "PORT": os.getenv("DB_PORT", default=None),
+#     }
+# }
 
 
 AUTH_PASSWORD_VALIDATORS = [
@@ -117,16 +125,19 @@ REST_FRAMEWORK = {
     "DEFAULT_PERMISSION_CLASSES": [
         "rest_framework.permissions.IsAuthenticatedOrReadOnly",
     ],
+    # "DEFAULT_AUTHENTICATION_CLASSES": [
+    #     "rest_framework_simplejwt.authentication.JWTAuthentication",
+    # ],
     "DEFAULT_AUTHENTICATION_CLASSES": [
-        "rest_framework_simplejwt.authentication.JWTAuthentication",
+        "rest_framework.authentication.TokenAuthentication",
     ],
     "DEFAULT_PAGINATION_CLASS": None,
 }
 
-SIMPLE_JWT = {
-    "ACCESS_TOKEN_LIFETIME": timedelta(days=1),
-    "AUTH_HEADER_TYPES": ("Bearer",),
-}
+# SIMPLE_JWT = {
+#     "ACCESS_TOKEN_LIFETIME": timedelta(days=1),
+#     "AUTH_HEADER_TYPES": ("Bearer",),
+# }
 
 ADMIN_EMAIL = "admin@email.com"
 

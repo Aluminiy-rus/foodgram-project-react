@@ -11,18 +11,20 @@ class ShoppingCart(models.Model):
         User,
         on_delete=models.CASCADE,
         related_name="user",
+        verbose_name="Пользователь",
     )
-    shopping_cart = models.ForeignKey(
+    recipe = models.ForeignKey(
         Recipe,
         on_delete=models.CASCADE,
-        related_name="Shopping_cart",
+        related_name="recipe",
+        verbose_name="Рецепт",
     )
     pub_date = models.DateTimeField(auto_now_add=True)
 
     class Meta:
         constraints = [
             models.UniqueConstraint(
-                fields=["user", "shopping_cart"], name="unique_shopping_cart"
+                fields=["user", "recipe"], name="unique_shopping_cart"
             )
         ]
         ordering = ("-pub_date",)

@@ -5,7 +5,8 @@ from rest_framework.decorators import action
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from rest_framework_simplejwt.tokens import AccessToken
+
+# from rest_framework_simplejwt.tokens import AccessToken
 
 from .mixins import GetPostDelMixin, PostDelMixin
 from .pagination import ApiPagination
@@ -40,22 +41,22 @@ class SignUp(APIView):
         return Response(serializer.validated_data, status=status.HTTP_200_OK)
 
 
-class Token(APIView):
-    """Вью для токенов"""
+# class Token(APIView):
+#     """Вью для токенов"""
 
-    permission_classes = [AllowAny]
+#     permission_classes = [AllowAny]
 
-    def post(self, request):
-        serializer = TokenSerializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        user = get_object_or_404(
-            User, username=serializer.validated_data["username"]
-        )
-        confirmation_code = serializer.validated_data["confirmation_code"]
-        if confirmation_code == confirm_code_generator(user):
-            token = {"token": str(AccessToken.for_user(user))}
-            return Response(token, status=status.HTTP_200_OK)
-        return Response(status=status.HTTP_400_BAD_REQUEST)
+#     def post(self, request):
+#         serializer = TokenSerializer(data=request.data)
+#         serializer.is_valid(raise_exception=True)
+#         user = get_object_or_404(
+#             User, username=serializer.validated_data["username"]
+#         )
+#         confirmation_code = serializer.validated_data["confirmation_code"]
+#         if confirmation_code == confirm_code_generator(user):
+#             token = {"token": str(AccessToken.for_user(user))}
+#             return Response(token, status=status.HTTP_200_OK)
+#         return Response(status=status.HTTP_400_BAD_REQUEST)
 
 
 class UserViewSet(viewsets.ModelViewSet):

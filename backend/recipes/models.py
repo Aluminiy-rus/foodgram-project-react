@@ -1,6 +1,6 @@
 from django.db import models
+from django.core.validators import MinValueValidator, RegexValidator
 
-from .validators import hex_color_validator
 from users.models import User
 
 
@@ -15,7 +15,12 @@ class Tag(models.Model):
     )
     color = models.CharField(
         max_length=7,
-        validators=[hex_color_validator],
+        validators=[
+            RegexValidator(
+                regex=r"^[A-Fa-f0-9]{6}$",
+                message="Значение цвета необходимо указывать в формате HEX-кода!",
+            ),
+        ],
         default="#ffffff",
         help_text="Цвет в формате HEX-кода (например, #49B64E).",
     )
@@ -40,9 +45,6 @@ class Ingredient(models.Model):
         verbose_name="Название",
         unique=True,
         db_index=True,
-    )
-    value = models.PositiveSmallIntegerField(
-        verbose_name="Количество",
     )
     measurement_unit = models.CharField(
         max_length=24,
@@ -86,14 +88,17 @@ class Recipe(models.Model):
     )
     ingredients = models.ManyToManyField(
         Ingredient,
-        on_delete=models.CASCADE,
+        through="RecipeIngredientValue",
+        on_delete=models.PROTECT,
         null=False,
         related_name="ingridients",
+        verbose_name="Ингредиенты рецепта",
         db_index=True,
+        help_text="Необходимые ингредиенты",
     )
     tags = models.ManyToManyField(
         Tag,
-        on_delete=models.SET_NULL,
+        on_delete=models.PROTECT,
         related_name="tags",
         db_index=True,
     )
@@ -106,15 +111,7 @@ class Recipe(models.Model):
         constraints = [
             models.UniqueConstraint(
                 name="author_recipe_unique",
-                fields=["author", "name", "ingredients"],
-            ),
-            models.UniqueConstraint(
-                name="author_recipe_unique",
-                fields=["author", "ingredients"],
-            ),
-            models.UniqueConstraint(
-                name="author_recipe_unique",
-                fields=["name", "ingredients"],
+                fields=["author", "name"],
             ),
         ]
         ordering = ("-pub_date",)
@@ -125,6 +122,47 @@ class Recipe(models.Model):
         return self.name
 
 
+class RecipeIngredientValue(models.Model):
+    recipe = models.ForeignKey(
+        Recipe,
+        on_delete=models.CASCADE,
+        verbose_name="Рецепт",
+    )
+    ingredient = models.ForeignKey(
+        Ingredient, on_delete=models.PROTECT, verbose_name="Ингредиент"
+    )
+    value = models.PositiveSmallIntegerField(
+        validators=[
+            MinValueValidator(
+                limit_value=0,
+                message="Минимальное значение должно быть больше 0",
+            ),
+        ],
+        verbose_name="Количество",
+    )
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                name="recipe_ingredient_value",
+                fields=["recipe", "ingredient", "value"],
+            ),
+        ]
+
+
+class RecipeTag(models.Model):
+    recipe = models.ForeignKey(
+        Recipe,
+        on_delete=models.CASCADE,
+        verbose_name="Рецепт",
+    )
+    tag = models.ForeignKey(
+        Tag,
+        on_delete=models.PROTECT,
+        verbose_name="Тэг",
+    )
+
+
 class Follow(models.Model):
     """Модель подписок"""
 
@@ -132,11 +170,13 @@ class Follow(models.Model):
         User,
         on_delete=models.CASCADE,
         related_name="follower",
+        verbose_name="Подписчик",
     )
     author = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
         related_name="following",
+        verbose_name="Автор рецепта",
     )
 
     class Meta:
@@ -157,11 +197,13 @@ class Favourite(models.Model):
         User,
         on_delete=models.CASCADE,
         related_name="user",
+        verbose_name="Подписчик",
     )
     favourite = models.ForeignKey(
         Recipe,
         on_delete=models.CASCADE,
         related_name="favourite",
+        verbose_name="Избранный рецепт",
     )
 
     class Meta:
