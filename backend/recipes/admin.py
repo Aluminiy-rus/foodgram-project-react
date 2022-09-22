@@ -1,9 +1,9 @@
-from django.contrib import admin
+from django.contrib.admin import ModelAdmin, site
 
 from .models import Favourite, Follow, Ingredient, Recipe, Tag
 
 
-class TagAdmin(admin.ModelAdmin):
+class TagAdmin(ModelAdmin):
     list_display = (
         "name",
         "color",
@@ -20,48 +20,42 @@ class TagAdmin(admin.ModelAdmin):
     empty_value_field = "-пусто-"
 
 
-class IngredientAdmin(admin.ModelAdmin):
+class IngredientAdmin(ModelAdmin):
     list_display = (
         "name",
-        "units",
+        "measurement_unit",
     )
     search_fields = (
         "name",
-        "units",
+        "measurement_unit",
     )
     list_filter = (
         "name",
-        "units",
+        "measurement_unit",
     )
     empty_value_field = "-пусто-"
 
 
-class RecipeAdmin(admin.ModelAdmin):
+class RecipeAdmin(ModelAdmin):
     list_display = (
         "name",
         "author",
-        "ingredients",
-        "tags",
         "pub_date",
     )
     search_fields = (
         "name",
         "author",
-        "ingredients",
-        "tags",
         "pub_date",
     )
     list_filter = (
         "name",
         "author",
-        "ingredients",
-        "tags",
         "pub_date",
     )
     empty_value_field = "-пусто-"
 
 
-class FollowAdmin(admin.ModelAdmin):
+class FollowAdmin(ModelAdmin):
     list_display = (
         "user",
         "author",
@@ -77,7 +71,7 @@ class FollowAdmin(admin.ModelAdmin):
     empty_value_field = "-пусто-"
 
 
-class FavouriteAdmin(admin.ModelAdmin):
+class FavouriteAdmin(ModelAdmin):
     list_display = (
         "user",
         "favourite",
@@ -93,8 +87,8 @@ class FavouriteAdmin(admin.ModelAdmin):
     empty_value_field = "-пусто-"
 
 
-admin.site.register(Tag, TagAdmin)
-admin.site.register(Ingredient, IngredientAdmin)
-admin.site.register(Recipe, RecipeAdmin)
-admin.site.register(Follow, FollowAdmin)
-admin.site.register(Favourite, FavouriteAdmin)
+site.register(Tag, TagAdmin)
+site.register(Ingredient, IngredientAdmin)
+site.register(Recipe, RecipeAdmin)
+site.register(Follow, FollowAdmin)
+site.register(Favourite, FavouriteAdmin)

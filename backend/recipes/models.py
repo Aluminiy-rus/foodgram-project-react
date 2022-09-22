@@ -2,6 +2,7 @@ from django.db import models
 from django.core.validators import MinValueValidator, RegexValidator
 
 from users.models import User
+from .validators import HexColorValidator
 
 
 class Tag(models.Model):
@@ -16,10 +17,7 @@ class Tag(models.Model):
     color = models.CharField(
         max_length=7,
         validators=[
-            RegexValidator(
-                regex=r"^[A-Fa-f0-9]{6}$",
-                message="Значение цвета необходимо указывать в формате HEX-кода!",
-            ),
+            HexColorValidator(),
         ],
         default="#ffffff",
         help_text="Цвет в формате HEX-кода (например, #49B64E).",
@@ -68,7 +66,7 @@ class Recipe(models.Model):
         User,
         on_delete=models.CASCADE,
         verbose_name="Автор",
-        related_name="recipes",
+        related_name="recipe_author",
         db_index=True,
     )
     name = models.CharField(
@@ -82,23 +80,21 @@ class Recipe(models.Model):
         upload_to="recipes/images/",
         blank=True,
     )
-    text = models.CharField(
+    text = models.TextField(
         verbose_name="Описание",
         null=True,
     )
     ingredients = models.ManyToManyField(
         Ingredient,
         through="RecipeIngredientValue",
-        on_delete=models.PROTECT,
-        null=False,
-        related_name="ingridients",
+        blank=False,
+        related_name="recipe_ingridients",
         verbose_name="Ингредиенты рецепта",
         db_index=True,
         help_text="Необходимые ингредиенты",
     )
     tags = models.ManyToManyField(
         Tag,
-        on_delete=models.PROTECT,
         related_name="tags",
         db_index=True,
     )
@@ -196,13 +192,13 @@ class Favourite(models.Model):
     user = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
-        related_name="user",
+        related_name="favourites_user",
         verbose_name="Подписчик",
     )
     favourite = models.ForeignKey(
         Recipe,
         on_delete=models.CASCADE,
-        related_name="favourite",
+        related_name="favourites",
         verbose_name="Избранный рецепт",
     )
 
@@ -213,3 +209,4 @@ class Favourite(models.Model):
             )
         ]
         verbose_name = "Избранное"
+        verbose_name_plural = "Избранное"

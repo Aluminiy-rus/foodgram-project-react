@@ -3,7 +3,7 @@ from rest_framework.authtoken import views
 from rest_framework.routers import DefaultRouter
 
 from .views import (
-    FavoriteViewSet,
+    FavouriteViewSet,
     IngredientViewSet,
     RecipeViewSet,
     ShoppingCartViewSet,
@@ -27,9 +27,9 @@ router.register("tags", TagViewSet)
 router.register("ingredients", IngredientViewSet)
 router.register("recipes", RecipeViewSet)
 router.register(
-    r"recipes/(?P<recipes_id>\d+)/favorite",
-    FavoriteViewSet,
-    basename="favorite",
+    r"recipes/(?P<recipes_id>\d+)/favourite",
+    FavouriteViewSet,
+    basename="favourite",
 )
 router.register(
     r"recipes/(?P<recipes_id>\d+)/shopping_cart",
@@ -38,8 +38,8 @@ router.register(
 )
 
 urlpatterns = [
-    path("/auth/signup/", SignUp.as_view(), name="signup"),
-    # path("/auth/token/", Token.as_view(), name="token"),
-    path("/auth/token/", views.obtain_auth_token),
+    path("auth/signup/", SignUp.as_view(), name="signup"),
+    # path("auth/token/", Token.as_view(), name="token"),
+    path("auth/token/", views.obtain_auth_token),
     path("/", include(router.urls)),
 ]

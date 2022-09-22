@@ -13,31 +13,31 @@ class User(AbstractUser):
     """Модель пользователя."""
 
     username = models.CharField(
-        verbose_name="Имя пользователя",
+        unique=True,
         max_length=150,
+        verbose_name="Имя пользователя",
         db_index=True,
     )
     password = models.CharField(
-        verbose_name="Пароль",
         max_length=150,
+        verbose_name="Пароль",
     )
     email = models.EmailField(
         max_length=254,
         db_index=True,
     )
     first_name = models.CharField(
-        verbose_name="Имя",
         max_length=150,
+        verbose_name="Имя",
         db_index=True,
     )
     last_name = models.CharField(
-        verbose_name="Фамилия",
         max_length=150,
+        verbose_name="Фамилия",
         db_index=True,
     )
     role = models.SlugField(choices=ROLES, default=USER)
     REQUIRED_FIELDS = [
-        "username",
         "password",
         "first_name",
         "last_name",

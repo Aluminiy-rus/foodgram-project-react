@@ -9,9 +9,9 @@ from recipes.models import (
     Follow,
     Ingredient,
     Recipe,
-    ShoppingCart,
     Tag,
 )
+from cart.models import ShoppingCart
 from users.models import User
 
 

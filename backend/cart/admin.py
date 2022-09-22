@@ -6,15 +6,15 @@ from .models import ShoppingCart
 class ShoppingCartAdmin(admin.ModelAdmin):
     list_display = (
         "user",
-        "shopping_cart",
+        "recipe",
     )
     search_fields = (
         "user",
-        "shopping_cart",
+        "recipe",
     )
     list_filter = (
         "user",
-        "shopping_cart",
+        "recipe",
     )
     empty_value_field = "-пусто-"
 
