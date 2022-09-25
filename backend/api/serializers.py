@@ -1,4 +1,10 @@
-from rest_framework import serializers
+from rest_framework.serializers import (
+    Serializer,
+    ModelSerializer,
+    CharField,
+    SlugRelatedField,
+    CurrentUserDefault,
+)
 from rest_framework.validators import (
     UniqueTogetherValidator,
 )
@@ -13,33 +19,34 @@ from recipes.models import (
 )
 from cart.models import ShoppingCart
 from users.models import User
+from .utils import Base64ImageField, Hex2NameColor
 
 
-class SignUpSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = User
-        validators = [
-            UsernameAllowedValidator(
-                username="username",
-            ),
-            UniqueTogetherValidator(
-                queryset=User.objects.all(),
-                fields=["username", "email"],
-            ),
-        ]
-        fields = (
-            "username",
-            "email",
-            "first_name",
-            "last_name",
-        )
+# class SignUpSerializer(ModelSerializer):
+#     class Meta:
+#         model = User
+#         validators = [
+#             UsernameAllowedValidator(
+#                 username="username",
+#             ),
+#             UniqueTogetherValidator(
+#                 queryset=User.objects.all(),
+#                 fields=["username", "email"],
+#             ),
+#         ]
+#         fields = (
+#             "username",
+#             "email",
+#             "first_name",
+#             "last_name",
+#         )
 
 
-class TokenSerializer(serializers.Serializer):
-    password = serializers.CharField(
+class TokenSerializer(Serializer):
+    password = CharField(
         required=True,
     )
-    email = serializers.CharField(
+    email = CharField(
         required=True,
     )
 
@@ -47,7 +54,7 @@ class TokenSerializer(serializers.Serializer):
         fields = ("auth_token",)
 
 
-class UserSerializer(serializers.ModelSerializer):
+class UserSerializer(ModelSerializer):
     class Meta:
         model = User
         validators = [
@@ -73,13 +80,13 @@ class UserSetPasswordSerializer(UserSerializer):
         )
 
 
-class FollowSerializer(serializers.ModelSerializer):
-    user = serializers.SlugRelatedField(
+class FollowSerializer(ModelSerializer):
+    user = SlugRelatedField(
         slug_field="username",
-        default=serializers.CurrentUserDefault(),
+        default=CurrentUserDefault(),
         queryset=User.objects.all(),
     )
-    following = serializers.SlugRelatedField(
+    following = SlugRelatedField(
         slug_field="username",
         queryset=User.objects.all(),
     )
@@ -99,36 +106,40 @@ class FollowSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
 
-class TagSerializer(serializers.ModelSerializer):
+class TagSerializer(ModelSerializer):
+    color = Hex2NameColor()
+
     class Meta:
         model = Tag
         fields = "__all__"
 
 
-class IngredientSerializer(serializers.ModelSerializer):
+class IngredientSerializer(ModelSerializer):
     class Meta:
         model = Ingredient
         fields = "__all__"
 
 
-class RecipeSerializer(serializers.ModelSerializer):
-    author = serializers.SlugRelatedField(
+class RecipeSerializer(ModelSerializer):
+    author = SlugRelatedField(
         slug_field="username",
         read_only=True,
     )
+    name = CharField(source="name")
+    image = Base64ImageField()
 
     class Meta:
         model = Recipe
         fields = "__all__"
 
 
-class FavouriteSerializer(serializers.ModelSerializer):
-    user = serializers.SlugRelatedField(
+class FavouriteSerializer(ModelSerializer):
+    user = SlugRelatedField(
         slug_field="username",
-        default=serializers.CurrentUserDefault(),
+        default=CurrentUserDefault(),
         queryset=User.objects.all(),
     )
-    favourite = serializers.SlugRelatedField(
+    favourite = SlugRelatedField(
         slug_field="username",
         queryset=User.objects.all(),
     )
@@ -144,7 +155,7 @@ class FavouriteSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
 
-class ShoppingCartSerializer(serializers.ModelSerializer):
+class ShoppingCartSerializer(ModelSerializer):
     class Meta:
         model = ShoppingCart
         fields = "__all__"

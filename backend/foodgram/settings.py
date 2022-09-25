@@ -20,9 +20,10 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-    "rest_framework",
-    # "rest_framework_simplejwt",
     "rest_framework.authtoken",
+    "rest_framework",
+    "corsheaders",
+    "djoser",
     "django_filters",
     "api",
     "cart",
@@ -33,12 +34,19 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
+    "corsheaders.middleware.CorsMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
+
+# CORS_ORIGIN_ALLOW_ALL = "True"
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:3000",
+]
+CORS_URLS_REGEX = r"^/api/.*$"
 
 ROOT_URLCONF = "foodgram.urls"
 
@@ -125,19 +133,11 @@ REST_FRAMEWORK = {
     "DEFAULT_PERMISSION_CLASSES": [
         "rest_framework.permissions.IsAuthenticatedOrReadOnly",
     ],
-    # "DEFAULT_AUTHENTICATION_CLASSES": [
-    #     "rest_framework_simplejwt.authentication.JWTAuthentication",
-    # ],
     "DEFAULT_AUTHENTICATION_CLASSES": [
         "rest_framework.authentication.TokenAuthentication",
     ],
     "DEFAULT_PAGINATION_CLASS": None,
 }
-
-# SIMPLE_JWT = {
-#     "ACCESS_TOKEN_LIFETIME": timedelta(days=1),
-#     "AUTH_HEADER_TYPES": ("Bearer",),
-# }
 
 ADMIN_EMAIL = "admin@email.com"
 

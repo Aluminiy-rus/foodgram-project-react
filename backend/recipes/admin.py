@@ -1,6 +1,26 @@
-from django.contrib.admin import ModelAdmin, site
+from django.contrib.admin import ModelAdmin, site, TabularInline
 
-from .models import Favourite, Follow, Ingredient, Recipe, Tag
+from .models import (
+    Favourite,
+    Follow,
+    Ingredient,
+    Recipe,
+    Tag,
+    RecipeTag,
+    RecipeIngredientValue,
+)
+
+
+class RecipeIngredientValueInLine(TabularInline):
+    model = RecipeIngredientValue
+    verbose_name = "Ингредиент рецепта"
+    verbose_name_plural = "Ингредиенты рецепта"
+
+
+class RecipeTagInLine(TabularInline):
+    model = RecipeTag
+    verbose_name = "Тег рецепта"
+    verbose_name_plural = "Теги рецепта"
 
 
 class TagAdmin(ModelAdmin):
@@ -51,6 +71,10 @@ class RecipeAdmin(ModelAdmin):
         "name",
         "author",
         "pub_date",
+    )
+    inlines = (
+        RecipeIngredientValueInLine,
+        RecipeTagInLine,
     )
     empty_value_field = "-пусто-"
 

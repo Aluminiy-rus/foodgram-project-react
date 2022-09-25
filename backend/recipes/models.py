@@ -1,5 +1,5 @@
 from django.db import models
-from django.core.validators import MinValueValidator, RegexValidator
+from django.core.validators import MinValueValidator
 
 from users.models import User
 from .validators import HexColorValidator
@@ -15,7 +15,7 @@ class Tag(models.Model):
         db_index=True,
     )
     color = models.CharField(
-        max_length=7,
+        max_length=16,
         validators=[
             HexColorValidator(),
         ],
@@ -78,7 +78,6 @@ class Recipe(models.Model):
     image = models.ImageField(
         verbose_name="Картинка",
         upload_to="recipes/images/",
-        blank=True,
     )
     text = models.TextField(
         verbose_name="Описание",
@@ -95,6 +94,7 @@ class Recipe(models.Model):
     )
     tags = models.ManyToManyField(
         Tag,
+        through="RecipeTag",
         related_name="tags",
         db_index=True,
     )

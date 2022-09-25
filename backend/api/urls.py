@@ -1,5 +1,8 @@
 from django.urls import include, path
-from rest_framework.authtoken import views
+
+from django.conf import settings
+from django.conf.urls.static import static
+
 from rest_framework.routers import DefaultRouter
 
 from .views import (
@@ -7,10 +10,9 @@ from .views import (
     IngredientViewSet,
     RecipeViewSet,
     ShoppingCartViewSet,
-    SignUp,
+    # SignUp,
     FollowViewSet,
     TagViewSet,
-    # Token,
     UserViewSet,
 )
 
@@ -38,8 +40,13 @@ router.register(
 )
 
 urlpatterns = [
-    path("auth/signup/", SignUp.as_view(), name="signup"),
-    # path("auth/token/", Token.as_view(), name="token"),
-    path("auth/token/", views.obtain_auth_token),
+    # path("auth/signup/", SignUp.as_view(), name="signup"),
+    path("auth/", include("djoser.urls")),
+    path("auth/", include("djoser.urls.authtoken")),
     path("/", include(router.urls)),
 ]
+
+if settings.DEBUG:
+    urlpatterns += static(
+        settings.MEDIA_URL, document_root=settings.MEDIA_ROOT
+    )

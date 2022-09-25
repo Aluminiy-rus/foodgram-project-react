@@ -1,20 +1,18 @@
-from django.shortcuts import get_object_or_404
+# from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters, status, viewsets
 from rest_framework.decorators import action
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
-from rest_framework.views import APIView
-
-# from rest_framework_simplejwt.tokens import AccessToken
+# from rest_framework.views import APIView
 
 from .mixins import GetPostDelMixin, PostDelMixin
 from .pagination import ApiPagination
 from .permissions import IsAuthorOrReadOnly
 from .serializers import (
     RecipeSerializer,
-    SignUpSerializer,
-    TokenSerializer,
+    # SignUpSerializer,
+    # TokenSerializer,
     UserSetPasswordSerializer,
     UserSerializer,
     FavouriteSerializer,
@@ -24,39 +22,21 @@ from .serializers import (
     TagSerializer,
 )
 from recipes.models import Recipe, Ingredient, Tag
-from users.confirm_code_generator import confirm_code_generator
+# from users.confirm_code_generator import confirm_code_generator
 from users.models import User
 
 
-class SignUp(APIView):
-    """Вью для регистрации"""
-
-    permission_classes = [AllowAny]
-
-    def post(self, request):
-        serializer = SignUpSerializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        user = serializer.save()
-        confirm_code_generator(user)
-        return Response(serializer.validated_data, status=status.HTTP_200_OK)
-
-
-# class Token(APIView):
-#     """Вью для токенов"""
+# class SignUp(APIView):
+#     """Вью для регистрации"""
 
 #     permission_classes = [AllowAny]
 
 #     def post(self, request):
-#         serializer = TokenSerializer(data=request.data)
+#         serializer = SignUpSerializer(data=request.data)
 #         serializer.is_valid(raise_exception=True)
-#         user = get_object_or_404(
-#             User, username=serializer.validated_data["username"]
-#         )
-#         confirmation_code = serializer.validated_data["confirmation_code"]
-#         if confirmation_code == confirm_code_generator(user):
-#             token = {"token": str(AccessToken.for_user(user))}
-#             return Response(token, status=status.HTTP_200_OK)
-#         return Response(status=status.HTTP_400_BAD_REQUEST)
+#         user = serializer.save()
+#         confirm_code_generator(user)
+#         return Response(serializer.validated_data, status=status.HTTP_200_OK)
 
 
 class UserViewSet(viewsets.ModelViewSet):

@@ -1,6 +1,8 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 
+from .validators import UsernameAllowedValidator
+
 USER = "user"
 ADMIN = "admin"
 ROLES = [
@@ -15,6 +17,9 @@ class User(AbstractUser):
     username = models.CharField(
         unique=True,
         max_length=150,
+        validators=[
+            UsernameAllowedValidator(),
+        ],
         verbose_name="Имя пользователя",
         db_index=True,
     )
