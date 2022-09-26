@@ -1,20 +1,15 @@
-# from django.shortcuts import get_object_or_404
+from django.contrib.auth import get_user_model
 from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework import filters, status, viewsets
-from rest_framework.decorators import action
+from djoser.views import UserViewSet
+from rest_framework import filters, viewsets
 from rest_framework.permissions import AllowAny, IsAuthenticated
-from rest_framework.response import Response
-# from rest_framework.views import APIView
 
 from .mixins import GetPostDelMixin, PostDelMixin
 from .pagination import ApiPagination
 from .permissions import IsAuthorOrReadOnly
 from .serializers import (
     RecipeSerializer,
-    # SignUpSerializer,
-    # TokenSerializer,
-    UserSetPasswordSerializer,
-    UserSerializer,
+    CustomUserSerializer,
     FavouriteSerializer,
     IngredientSerializer,
     ShoppingCartSerializer,
@@ -22,64 +17,20 @@ from .serializers import (
     TagSerializer,
 )
 from recipes.models import Recipe, Ingredient, Tag
-# from users.confirm_code_generator import confirm_code_generator
-from users.models import User
+
+User = get_user_model()
 
 
-# class SignUp(APIView):
-#     """Вью для регистрации"""
-
-#     permission_classes = [AllowAny]
-
-#     def post(self, request):
-#         serializer = SignUpSerializer(data=request.data)
-#         serializer.is_valid(raise_exception=True)
-#         user = serializer.save()
-#         confirm_code_generator(user)
-#         return Response(serializer.validated_data, status=status.HTTP_200_OK)
-
-
-class UserViewSet(viewsets.ModelViewSet):
+class CustomUserViewSet(UserViewSet):
     """Вьюсет для пользователей"""
 
     queryset = User.objects.all()
     permission_classes = [AllowAny]
-    serializer_class = UserSerializer
+    serializer_class = CustomUserSerializer
     pagination_class = ApiPagination
     filter_backends = [DjangoFilterBackend, filters.SearchFilter]
     search_fields = ["username"]
     lookup_field = "username"
-
-    @action(
-        methods=["get"],
-        detail=False,
-        url_path="me",
-        permission_classes=[IsAuthenticated],
-    )
-    def user_me(self, request):
-        user = self.request.user
-        if request.method == "GET":
-            serializer = UserSerializer(user)
-            return Response(serializer.data)
-        return None
-
-    @action(
-        methods=["post"],
-        detail=False,
-        url_path="set_password",
-        permission_classes=[IsAuthenticated],
-    )
-    def user_set_password(self, request):
-        if request.method == "POST":
-            user = self.request.user
-            serializer = UserSetPasswordSerializer(
-                user,
-                data=request.data,
-            )
-            serializer.is_valid(raise_exception=True)
-            serializer.save()
-            return Response(serializer.data)
-        return None
 
 
 class RecipeViewSet(viewsets.ModelViewSet):

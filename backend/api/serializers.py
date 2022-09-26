@@ -1,5 +1,5 @@
+from djoser.serializers import UserSerializer
 from rest_framework.serializers import (
-    Serializer,
     ModelSerializer,
     CharField,
     SlugRelatedField,
@@ -9,7 +9,7 @@ from rest_framework.validators import (
     UniqueTogetherValidator,
 )
 
-from .validators import UsernameAllowedValidator, UserNotAuthorValidator
+from .validators import UserNotAuthorValidator
 from recipes.models import (
     Favourite,
     Follow,
@@ -22,39 +22,8 @@ from users.models import User
 from .utils import Base64ImageField, Hex2NameColor
 
 
-# class SignUpSerializer(ModelSerializer):
-#     class Meta:
-#         model = User
-#         validators = [
-#             UsernameAllowedValidator(
-#                 username="username",
-#             ),
-#             UniqueTogetherValidator(
-#                 queryset=User.objects.all(),
-#                 fields=["username", "email"],
-#             ),
-#         ]
-#         fields = (
-#             "username",
-#             "email",
-#             "first_name",
-#             "last_name",
-#         )
-
-
-class TokenSerializer(Serializer):
-    password = CharField(
-        required=True,
-    )
-    email = CharField(
-        required=True,
-    )
-
-    class Meta:
-        fields = ("auth_token",)
-
-
-class UserSerializer(ModelSerializer):
+class CustomUserSerializer(UserSerializer):
+    """Сериализатор для пользователей"""
     class Meta:
         model = User
         validators = [
@@ -71,7 +40,8 @@ class UserSerializer(ModelSerializer):
         )
 
 
-class UserSetPasswordSerializer(UserSerializer):
+class UserSetPasswordSerializer(CustomUserSerializer):
+    """Сериализатор для смены пароля"""
     class Meta(UserSerializer.Meta):
         model = User
         fields = (
@@ -81,6 +51,7 @@ class UserSetPasswordSerializer(UserSerializer):
 
 
 class FollowSerializer(ModelSerializer):
+    """Сериализатор для подписок"""
     user = SlugRelatedField(
         slug_field="username",
         default=CurrentUserDefault(),
@@ -107,6 +78,7 @@ class FollowSerializer(ModelSerializer):
 
 
 class TagSerializer(ModelSerializer):
+    """Сериализатор для тэгов"""
     color = Hex2NameColor()
 
     class Meta:
@@ -115,12 +87,14 @@ class TagSerializer(ModelSerializer):
 
 
 class IngredientSerializer(ModelSerializer):
+    """Сериализатор для ингредиентов"""
     class Meta:
         model = Ingredient
         fields = "__all__"
 
 
 class RecipeSerializer(ModelSerializer):
+    """Сериализатор для рецептов"""
     author = SlugRelatedField(
         slug_field="username",
         read_only=True,
@@ -134,6 +108,7 @@ class RecipeSerializer(ModelSerializer):
 
 
 class FavouriteSerializer(ModelSerializer):
+    """Сериализатор для избранного"""
     user = SlugRelatedField(
         slug_field="username",
         default=CurrentUserDefault(),
@@ -156,6 +131,7 @@ class FavouriteSerializer(ModelSerializer):
 
 
 class ShoppingCartSerializer(ModelSerializer):
+    """Сериализатор для списка покупок"""
     class Meta:
         model = ShoppingCart
         fields = "__all__"

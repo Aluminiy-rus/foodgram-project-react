@@ -98,7 +98,7 @@ class Recipe(models.Model):
         related_name="tags",
         db_index=True,
     )
-    сooking_time = models.TimeField(
+    сooking_time = models.PositiveSmallIntegerField(
         verbose_name="Время приготовления",
     )
     pub_date = models.DateTimeField(auto_now_add=True)
@@ -125,7 +125,9 @@ class RecipeIngredientValue(models.Model):
         verbose_name="Рецепт",
     )
     ingredient = models.ForeignKey(
-        Ingredient, on_delete=models.PROTECT, verbose_name="Ингредиент"
+        Ingredient,
+        on_delete=models.PROTECT,
+        verbose_name="Ингредиент",
     )
     value = models.PositiveSmallIntegerField(
         validators=[

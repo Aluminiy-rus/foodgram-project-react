@@ -1,5 +1,4 @@
 import os
-from datetime import timedelta
 
 from dotenv import load_dotenv
 
@@ -20,8 +19,8 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-    "rest_framework.authtoken",
     "rest_framework",
+    "rest_framework.authtoken",
     "corsheaders",
     "djoser",
     "django_filters",
@@ -137,6 +136,10 @@ REST_FRAMEWORK = {
         "rest_framework.authentication.TokenAuthentication",
     ],
     "DEFAULT_PAGINATION_CLASS": None,
+}
+
+DJOSER = {
+    "LOGIN_FIELD": "email",
 }
 
 ADMIN_EMAIL = "admin@email.com"

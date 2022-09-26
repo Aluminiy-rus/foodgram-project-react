@@ -10,16 +10,15 @@ from .views import (
     IngredientViewSet,
     RecipeViewSet,
     ShoppingCartViewSet,
-    # SignUp,
     FollowViewSet,
     TagViewSet,
-    UserViewSet,
+    CustomUserViewSet,
 )
 
 app_name = "api"
 
 router = DefaultRouter()
-router.register("users", UserViewSet)
+router.register("users", CustomUserViewSet)
 router.register(
     r"users/(?P<users_id>\d+)/subscribe",
     FollowViewSet,
@@ -40,13 +39,13 @@ router.register(
 )
 
 urlpatterns = [
-    # path("auth/signup/", SignUp.as_view(), name="signup"),
-    path("auth/", include("djoser.urls")),
+    path("", include(router.urls)),
+    path("", include("djoser.urls")),
     path("auth/", include("djoser.urls.authtoken")),
-    path("/", include(router.urls)),
 ]
 
 if settings.DEBUG:
     urlpatterns += static(
-        settings.MEDIA_URL, document_root=settings.MEDIA_ROOT
+        settings.MEDIA_URL,
+        document_root=settings.MEDIA_ROOT
     )
