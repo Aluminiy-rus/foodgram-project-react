@@ -48,6 +48,7 @@ class User(AbstractUser):
         "last_name",
         "email",
     ]
+    USERNAME_FIELD = "username"
 
     class Meta:
         verbose_name = "Пользователь"

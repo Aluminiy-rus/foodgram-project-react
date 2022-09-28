@@ -1,27 +1,31 @@
 from django.contrib.auth import get_user_model
 from django_filters.rest_framework import DjangoFilterBackend
-from djoser.views import UserViewSet
-from rest_framework import filters, viewsets
+from djoser.serializers import UserSerializer
+from rest_framework import filters, status
+from rest_framework.viewsets import ModelViewSet, ReadOnlyModelViewSet
+from rest_framework.decorators import action
 from rest_framework.permissions import AllowAny, IsAuthenticated
+from rest_framework.response import Response
 
 from .mixins import GetPostDelMixin, PostDelMixin
 from .pagination import ApiPagination
 from .permissions import IsAuthorOrReadOnly
 from .serializers import (
-    RecipeSerializer,
     CustomUserSerializer,
+    # SubscriptionUserSerializer,
+    RecipeSerializer,
     FavouriteSerializer,
     IngredientSerializer,
     ShoppingCartSerializer,
     FollowSerializer,
     TagSerializer,
 )
-from recipes.models import Recipe, Ingredient, Tag
+from recipes.models import Recipe, Ingredient, Tag, Follow
 
 User = get_user_model()
 
 
-class CustomUserViewSet(UserViewSet):
+class CustomUserViewSet(ModelViewSet):
     """Вьюсет для пользователей"""
 
     queryset = User.objects.all()
@@ -32,8 +36,29 @@ class CustomUserViewSet(UserViewSet):
     search_fields = ["username"]
     lookup_field = "username"
 
+    @action(
+        methods=["get"],
+        detail=False,
+        url_path="me",
+        permission_classes=[IsAuthenticated],
+    )
+    def user_me_actions(self, request):
+        user = self.request.user
+        serializer = UserSerializer(user)
+        return Response(serializer.data)
 
-class RecipeViewSet(viewsets.ModelViewSet):
+    # @action(
+    #     methods=['get'],
+    #     detail=False,
+    #     url_path="subscriptions",
+    #     permission_classes=[IsAuthenticated],
+    # )
+    # def subscriptions(self, request):
+    #     user = self.request.user
+    #     is_subscribed = Follow.objects.filter(user=user).all()
+
+
+class RecipeViewSet(ModelViewSet):
     """Вьюсет для рецептов"""
 
     queryset = Recipe.objects.all()
@@ -64,7 +89,7 @@ class FavouriteViewSet(PostDelMixin):
         serializer.save(user=self.request.user)
 
 
-class IngredientViewSet(viewsets.ReadOnlyModelViewSet):
+class IngredientViewSet(ReadOnlyModelViewSet):
     """Вьюсет для ингредиентов"""
 
     queryset = Ingredient.objects.all()
@@ -106,7 +131,7 @@ class FollowViewSet(GetPostDelMixin):
         serializer.save(user=self.request.user)
 
 
-class TagViewSet(viewsets.ReadOnlyModelViewSet):
+class TagViewSet(ReadOnlyModelViewSet):
     """Вьюсет для тэгов"""
 
     queryset = Tag.objects.all()

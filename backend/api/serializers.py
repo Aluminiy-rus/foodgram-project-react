@@ -1,3 +1,4 @@
+from django.contrib.auth import get_user_model
 from djoser.serializers import UserSerializer
 from rest_framework.serializers import (
     ModelSerializer,
@@ -9,7 +10,7 @@ from rest_framework.validators import (
     UniqueTogetherValidator,
 )
 
-from .validators import UserNotAuthorValidator
+from .validators import UserNotAuthorValidator, UsernameAllowedValidator
 from recipes.models import (
     Favourite,
     Follow,
@@ -18,40 +19,32 @@ from recipes.models import (
     Tag,
 )
 from cart.models import ShoppingCart
-from users.models import User
 from .utils import Base64ImageField, Hex2NameColor
+
+User = get_user_model()
 
 
 class CustomUserSerializer(UserSerializer):
-    """Сериализатор для пользователей"""
     class Meta:
         model = User
         validators = [
-            UniqueTogetherValidator(
-                queryset=User.objects.all(),
-                fields=["username", "email"],
+            UsernameAllowedValidator(
+                username="username",
             ),
         ]
         fields = (
             "email",
+            "id",
             "username",
             "first_name",
             "last_name",
-        )
-
-
-class UserSetPasswordSerializer(CustomUserSerializer):
-    """Сериализатор для смены пароля"""
-    class Meta(UserSerializer.Meta):
-        model = User
-        fields = (
-            "new_password",
-            "current_password",
+            # "is_subscribed",
         )
 
 
 class FollowSerializer(ModelSerializer):
     """Сериализатор для подписок"""
+
     user = SlugRelatedField(
         slug_field="username",
         default=CurrentUserDefault(),
@@ -79,6 +72,7 @@ class FollowSerializer(ModelSerializer):
 
 class TagSerializer(ModelSerializer):
     """Сериализатор для тэгов"""
+
     color = Hex2NameColor()
 
     class Meta:
@@ -88,6 +82,7 @@ class TagSerializer(ModelSerializer):
 
 class IngredientSerializer(ModelSerializer):
     """Сериализатор для ингредиентов"""
+
     class Meta:
         model = Ingredient
         fields = "__all__"
@@ -95,6 +90,7 @@ class IngredientSerializer(ModelSerializer):
 
 class RecipeSerializer(ModelSerializer):
     """Сериализатор для рецептов"""
+
     author = SlugRelatedField(
         slug_field="username",
         read_only=True,
@@ -109,6 +105,7 @@ class RecipeSerializer(ModelSerializer):
 
 class FavouriteSerializer(ModelSerializer):
     """Сериализатор для избранного"""
+
     user = SlugRelatedField(
         slug_field="username",
         default=CurrentUserDefault(),
@@ -132,6 +129,7 @@ class FavouriteSerializer(ModelSerializer):
 
 class ShoppingCartSerializer(ModelSerializer):
     """Сериализатор для списка покупок"""
+
     class Meta:
         model = ShoppingCart
         fields = "__all__"
