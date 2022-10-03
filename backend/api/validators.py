@@ -1,4 +1,4 @@
-from rest_framework import serializers
+from rest_framework.serializers import ValidationError
 
 
 class UsernameAllowedValidator:
@@ -10,19 +10,19 @@ class UsernameAllowedValidator:
     def __call__(self, data):
         if data["username"].lower() == ("me" or "set_password"):
             message = "Недопустимое значение имени"
-            raise serializers.ValidationError(message)
+            raise ValidationError(message)
         return data
 
 
 class UserNotAuthorValidator:
     """Валидатор запрещающий подписки на самого себя"""
 
-    def __init__(self, user, following):
+    def __init__(self, user, author):
         self.user = user
-        self.following = following
+        self.author = author
 
     def __call__(self, data):
-        if data["user"] == data["following"]:
+        if data["user"] == data["author"]:
             message = "Подписка на самого себя не возможна."
-            raise serializers.ValidationError(message)
+            raise ValidationError(message)
         return data

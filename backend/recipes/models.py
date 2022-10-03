@@ -85,7 +85,7 @@ class Recipe(models.Model):
     )
     ingredients = models.ManyToManyField(
         Ingredient,
-        through="RecipeIngredientValue",
+        through="RecipeIngredientAmount",
         blank=False,
         related_name="recipe_ingridients",
         verbose_name="Ингредиенты рецепта",
@@ -118,7 +118,7 @@ class Recipe(models.Model):
         return self.name
 
 
-class RecipeIngredientValue(models.Model):
+class RecipeIngredientAmount(models.Model):
     recipe = models.ForeignKey(
         Recipe,
         on_delete=models.CASCADE,
@@ -129,7 +129,7 @@ class RecipeIngredientValue(models.Model):
         on_delete=models.PROTECT,
         verbose_name="Ингредиент",
     )
-    value = models.PositiveSmallIntegerField(
+    amount = models.PositiveSmallIntegerField(
         validators=[
             MinValueValidator(
                 limit_value=0,
@@ -143,7 +143,7 @@ class RecipeIngredientValue(models.Model):
         constraints = [
             models.UniqueConstraint(
                 name="recipe_ingredient_value",
-                fields=["recipe", "ingredient", "value"],
+                fields=["recipe", "ingredient", "amount"],
             ),
         ]
 
@@ -188,26 +188,27 @@ class Follow(models.Model):
         verbose_name_plural = "Подписки"
 
 
-class Favourite(models.Model):
+class Favorite(models.Model):
     """Модель избранного"""
 
     user = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
-        related_name="favourites_user",
+        related_name="favorites_user",
         verbose_name="Подписчик",
     )
-    favourite = models.ForeignKey(
+    favorite = models.ForeignKey(
         Recipe,
         on_delete=models.CASCADE,
-        related_name="favourites",
+        related_name="favorites",
         verbose_name="Избранный рецепт",
     )
 
     class Meta:
         constraints = [
             models.UniqueConstraint(
-                fields=["user", "favourite"], name="unique_favourites"
+                fields=["user", "favorite"],
+                name="unique_favorites",
             )
         ]
         verbose_name = "Избранное"

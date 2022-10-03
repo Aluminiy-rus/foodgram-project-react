@@ -96,9 +96,9 @@ AUTH_PASSWORD_VALIDATORS = [
     {
         "NAME": "django.contrib.auth.password_validation.MinimumLengthValidator",
     },
-    {
-        "NAME": "django.contrib.auth.password_validation.CommonPasswordValidator",
-    },
+    # {
+    #     "NAME": "django.contrib.auth.password_validation.CommonPasswordValidator",
+    # },
     {
         "NAME": "django.contrib.auth.password_validation.NumericPasswordValidator",
     },
@@ -139,7 +139,25 @@ REST_FRAMEWORK = {
 }
 
 DJOSER = {
+    "USER_ID_FIELD": "username",
     "LOGIN_FIELD": "email",
+    "SERIALIZERS": {
+        "user": "api.serializers.CustomUserSerializer",
+        "user_list": "api.serializers.CustomUserSerializer",
+        "current_user": "api.serializers.CustomUserSerializer",
+    },
+    "PERMISSIONS": {
+        "user": [
+            "rest_framework.permissions.AllowAny",
+        ],
+        "user_list": [
+            "rest_framework.permissions.AllowAny",
+        ],
+        "current_user": [
+            "rest_framework.permissions.IsAuthenticated",
+        ],
+    },
+    "HIDE_USERS": False,
 }
 
 ADMIN_EMAIL = "admin@email.com"

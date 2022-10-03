@@ -1,6 +1,13 @@
 from rest_framework.permissions import SAFE_METHODS, BasePermission
 
 
+# class ReadOnly(BasePermission):
+#     """Ограничение прав пользователю, который не является автором"""
+
+#     def has_object_permission(self, request, view):
+#         return request.method in SAFE_METHODS
+
+
 class IsAuthorOrReadOnly(BasePermission):
     """Ограничение прав пользователю, который не является автором"""
 

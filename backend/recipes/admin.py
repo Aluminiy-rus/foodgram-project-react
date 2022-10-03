@@ -1,18 +1,18 @@
 from django.contrib.admin import ModelAdmin, site, TabularInline
 
 from .models import (
-    Favourite,
+    Favorite,
     Follow,
     Ingredient,
     Recipe,
     Tag,
     RecipeTag,
-    RecipeIngredientValue,
+    RecipeIngredientAmount,
 )
 
 
-class RecipeIngredientValueInLine(TabularInline):
-    model = RecipeIngredientValue
+class RecipeIngredientAmountInLine(TabularInline):
+    model = RecipeIngredientAmount
     verbose_name = "Ингредиент рецепта"
     verbose_name_plural = "Ингредиенты рецепта"
 
@@ -73,7 +73,7 @@ class RecipeAdmin(ModelAdmin):
         "pub_date",
     )
     inlines = (
-        RecipeIngredientValueInLine,
+        RecipeIngredientAmountInLine,
         RecipeTagInLine,
     )
     empty_value_field = "-пусто-"
@@ -95,18 +95,18 @@ class FollowAdmin(ModelAdmin):
     empty_value_field = "-пусто-"
 
 
-class FavouriteAdmin(ModelAdmin):
+class FavoriteAdmin(ModelAdmin):
     list_display = (
         "user",
-        "favourite",
+        "favorite",
     )
     search_fields = (
         "user",
-        "favourite",
+        "favorite",
     )
     list_filter = (
         "user",
-        "favourite",
+        "favorite",
     )
     empty_value_field = "-пусто-"
 
@@ -115,4 +115,4 @@ site.register(Tag, TagAdmin)
 site.register(Ingredient, IngredientAdmin)
 site.register(Recipe, RecipeAdmin)
 site.register(Follow, FollowAdmin)
-site.register(Favourite, FavouriteAdmin)
+site.register(Favorite, FavoriteAdmin)
