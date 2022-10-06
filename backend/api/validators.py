@@ -26,3 +26,17 @@ class UserNotAuthorValidator:
             message = "Подписка на самого себя не возможна."
             raise ValidationError(message)
         return data
+
+
+class RecipeIngredientsAmountValidator:
+    """Проверка полей ингредиентов в рецептах"""
+
+    def __init__(self, amount):
+        self.amount = amount
+
+    def __call__(self, data):
+        if data["amount"] <= 0:
+            message = "Ингредиентов должно быть больше 0."
+            raise ValidationError(message)
+        return data
+

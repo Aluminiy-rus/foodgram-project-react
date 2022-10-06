@@ -9,7 +9,6 @@ from rest_framework.decorators import action
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 
-from .mixins import GetPostDelMixin, PostDelMixin
 from .pagination import ApiPagination
 from .permissions import IsAuthorOrReadOnly
 from .serializers import (
@@ -54,6 +53,10 @@ class CustomUserViewSet(UserViewSet):
         )
         serializer.is_valid(raise_exception=True)
         serializer.save()
+        queryset = get_object_or_404(Follow, user=user)
+        serializer = SubscriptionsSerializer(
+            queryset, context={"request": request}
+        )
 
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
@@ -89,7 +92,7 @@ class RecipeViewSet(ModelViewSet):
     pagination_class = ApiPagination
 
     def perform_create(self, serializer):
-        serializer.save(author=self.request.user)
+        return serializer.save(author=self.request.user)
 
     def get_queryset(self):
         user = self.request.user
@@ -97,11 +100,11 @@ class RecipeViewSet(ModelViewSet):
             return Recipe.objects.all()
         queryset = Recipe.objects.annotate(
             is_favorited=Exists(
-                Favorite.objects.filter(user=user, recipe_id=OuterRef("id"))
+                Favorite.objects.filter(user=user, favorite_id=OuterRef("id"))
             ),
             is_in_shopping_cart=Exists(
                 ShoppingCart.objects.filter(
-                    user=user, recipe_id=OuterRef("id")
+                    user=user, favorite_id=OuterRef("id")
                 )
             ),
         )

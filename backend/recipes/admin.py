@@ -15,12 +15,14 @@ class RecipeIngredientAmountInLine(TabularInline):
     model = RecipeIngredientAmount
     verbose_name = "Ингредиент рецепта"
     verbose_name_plural = "Ингредиенты рецепта"
+    extra = 1
 
 
 class RecipeTagInLine(TabularInline):
     model = RecipeTag
     verbose_name = "Тег рецепта"
     verbose_name_plural = "Теги рецепта"
+    extra = 1
 
 
 class TagAdmin(ModelAdmin):
