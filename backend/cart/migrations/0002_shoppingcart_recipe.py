@@ -9,14 +9,19 @@ class Migration(migrations.Migration):
     initial = True
 
     dependencies = [
-        ('recipes', '0001_initial'),
-        ('cart', '0001_initial'),
+        ("recipes", "0001_initial"),
+        ("cart", "0001_initial"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='shoppingcart',
-            name='recipe',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='cart_recipe', to='recipes.recipe', verbose_name='Рецепт'),
+            model_name="shoppingcart",
+            name="recipe",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name="cart_recipe",
+                to="recipes.recipe",
+                verbose_name="Рецепт",
+            ),
         ),
     ]

@@ -1,5 +1,4 @@
 from django.db import models
-from django.core.validators import MinValueValidator
 
 from users.models import User
 from .validators import HexColorValidator
@@ -123,10 +122,12 @@ class RecipeIngredientAmount(models.Model):
     recipe = models.ForeignKey(
         Recipe,
         on_delete=models.CASCADE,
+        related_name="recipe_ingredient_amount",
         verbose_name="Рецепт",
     )
     ingredient = models.ForeignKey(
         Ingredient,
+        related_name="recipe_ingredient_amount",
         on_delete=models.PROTECT,
         verbose_name="Ингредиент",
     )
@@ -138,7 +139,7 @@ class RecipeIngredientAmount(models.Model):
     class Meta:
         constraints = [
             models.UniqueConstraint(
-                name="recipe_ingredient_value",
+                name="unique_recipe_ingredient_amount",
                 fields=["recipe", "ingredient", "amount"],
             ),
         ]

@@ -30,8 +30,8 @@ User = get_user_model()
 class CustomUserViewSet(UserViewSet):
     """Вьюсет для юзеров"""
 
-    queryset = User.objects.all()
     permission_classes = [AllowAny]
+    queryset = User.objects.all()
     pagination_class = ApiPagination
     serializer_class = CustomUserSerializer
     lookup_field = "id"
@@ -48,15 +48,11 @@ class CustomUserViewSet(UserViewSet):
             "user": user.id,
             "author": author.id,
         }
-        serializer = SubscribeSerializer(
-            data=data, context={"request": request}
-        )
+        serializer = SubscribeSerializer(data=data, context={"request": request})
         serializer.is_valid(raise_exception=True)
         serializer.save()
         queryset = get_object_or_404(Follow, user=user)
-        serializer = SubscriptionsSerializer(
-            queryset, context={"request": request}
-        )
+        serializer = SubscriptionsSerializer(queryset, context={"request": request})
 
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
@@ -86,10 +82,10 @@ class CustomUserViewSet(UserViewSet):
 class RecipeViewSet(ModelViewSet):
     """Вьюсет для рецептов"""
 
-    queryset = Recipe.objects.all()
     permission_classes = [IsAuthorOrReadOnly]
-    serializer_class = RecipeSerializer
+    queryset = Recipe.objects.all()
     pagination_class = ApiPagination
+    serializer_class = RecipeSerializer
 
     def perform_create(self, serializer):
         return serializer.save(author=self.request.user)
@@ -103,9 +99,7 @@ class RecipeViewSet(ModelViewSet):
                 Favorite.objects.filter(user=user, favorite_id=OuterRef("id"))
             ),
             is_in_shopping_cart=Exists(
-                ShoppingCart.objects.filter(
-                    user=user, favorite_id=OuterRef("id")
-                )
+                ShoppingCart.objects.filter(user=user, favorite_id=OuterRef("id"))
             ),
         )
         if self.request.GET.get("is_favorited"):
@@ -114,17 +108,19 @@ class RecipeViewSet(ModelViewSet):
             return queryset.filter(is_in_shopping_cart=True)
         return queryset
 
-    @action(detail=True, permission_classes=[IsAuthenticated])
+    @action(
+        methods=['post'],
+        permission_classes=[IsAuthenticated],
+        detail=True,
+    )
     def favorite(self, request, pk=None):
         user = self.request.user
         recipe = get_object_or_404(Recipe, id=pk)
         data = {
             "user": user.id,
-            "recipe": recipe.id,
+            "favorite": recipe.id,
         }
-        serializer = FavoriteSerializer(
-            data=data, context={"request": request}
-        )
+        serializer = FavoriteSerializer(data=data, context={"request": request})
         serializer.is_valid(raise_exception=True)
         serializer.save()
         return Response(serializer.data, status=status.HTTP_201_CREATED)
@@ -133,7 +129,7 @@ class RecipeViewSet(ModelViewSet):
     def delete_favorite(self, request, pk=None):
         user = self.request.user
         recipe = get_object_or_404(Recipe, id=pk)
-        favorite = get_object_or_404(Favorite, user=user, recipe=recipe)
+        favorite = get_object_or_404(Favorite, user=user, favorite=recipe)
         favorite.delete()
 
         return Response(status=status.HTTP_204_NO_CONTENT)
@@ -142,7 +138,9 @@ class RecipeViewSet(ModelViewSet):
 class IngredientViewSet(ReadOnlyModelViewSet):
     """Вьюсет для ингредиентов"""
 
+    permission_classes = [AllowAny]
     queryset = Ingredient.objects.all()
+    pagination_class = None
     serializer_class = IngredientSerializer
 
 
@@ -150,4 +148,6 @@ class TagViewSet(ReadOnlyModelViewSet):
     """Вьюсет для тэгов"""
 
     queryset = Tag.objects.all()
+    permission_classes = [AllowAny]
+    pagination_class = None
     serializer_class = TagSerializer

@@ -10,18 +10,25 @@ class Migration(migrations.Migration):
     initial = True
 
     dependencies = [
-        ('cart', '0002_shoppingcart_recipe'),
+        ("cart", "0002_shoppingcart_recipe"),
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='shoppingcart',
-            name='user',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='cart_user', to=settings.AUTH_USER_MODEL, verbose_name='Пользователь'),
+            model_name="shoppingcart",
+            name="user",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name="cart_user",
+                to=settings.AUTH_USER_MODEL,
+                verbose_name="Пользователь",
+            ),
         ),
         migrations.AddConstraint(
-            model_name='shoppingcart',
-            constraint=models.UniqueConstraint(fields=('user', 'recipe'), name='unique_shopping_cart'),
+            model_name="shoppingcart",
+            constraint=models.UniqueConstraint(
+                fields=("user", "recipe"), name="unique_shopping_cart"
+            ),
         ),
     ]

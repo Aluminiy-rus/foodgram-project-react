@@ -39,4 +39,3 @@ class RecipeIngredientsAmountValidator:
             message = "Ингредиентов должно быть больше 0."
             raise ValidationError(message)
         return data
-
