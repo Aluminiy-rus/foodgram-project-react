@@ -96,10 +96,10 @@ class RecipeViewSet(ModelViewSet):
             return Recipe.objects.all()
         queryset = Recipe.objects.annotate(
             is_favorited=Exists(
-                Favorite.objects.filter(user=user, favorite_id=OuterRef("id"))
+                Favorite.objects.filter(user=user, id=OuterRef("pk"))
             ),
             is_in_shopping_cart=Exists(
-                ShoppingCart.objects.filter(user=user, favorite_id=OuterRef("id"))
+                ShoppingCart.objects.filter(user=user, id=OuterRef("pk"))
             ),
         )
         if self.request.GET.get("is_favorited"):

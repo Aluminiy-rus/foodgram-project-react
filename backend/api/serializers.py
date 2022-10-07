@@ -259,7 +259,7 @@ class SubscriptionsSerializer(ModelSerializer):
         request = self.context.get("request")
         if not request or request.user.is_anonymous:
             return False
-        return Follow.objects.filter(user=obj.user, author=obj.author).exists()
+        return Follow.objects.filter(user=request.user, author=obj.author).exists()
 
     def get_recipes(self, obj):
         request = self.context.get("request")
@@ -272,6 +272,17 @@ class SubscriptionsSerializer(ModelSerializer):
 
     def get_recipes_count(self, obj):
         return Recipe.objects.filter(author=obj.author).count()
+
+
+class FavoriteRecipeSerializer(RecipeSerializer):
+    class Meta:
+        model = Recipe
+        fields = (
+            "id",
+            "name",
+            "image",
+            "cooking_time",
+        )
 
 
 class FavoriteSerializer(ModelSerializer):
@@ -305,4 +316,4 @@ class FavoriteSerializer(ModelSerializer):
     def to_representation(self, instance):
         request = self.context.get('request')
         context = {'request': request}
-        return SubscriptionsSerializer(instance.favorite, context=context).data
+        return FavoriteRecipeSerializer(instance.favorite, context=context).data
