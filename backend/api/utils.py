@@ -15,7 +15,6 @@ class Hex2NameColor(serializers.Field):
             data = webcolors.hex_to_name(data)
         except ValueError:
             raise serializers.ValidationError("Для этого цвета нет имени")
-        return data
 
 
 class Base64ImageField(serializers.ImageField):

@@ -60,7 +60,8 @@ class Migration(migrations.Migration):
                 (
                     "date_joined",
                     models.DateTimeField(
-                        default=django.utils.timezone.now, verbose_name="date joined"
+                        default=django.utils.timezone.now,
+                        verbose_name="date joined",
                     ),
                 ),
                 (
@@ -69,15 +70,22 @@ class Migration(migrations.Migration):
                         db_index=True,
                         max_length=150,
                         unique=True,
-                        validators=[users.validators.UsernameAllowedValidator()],
+                        validators=[
+                            users.validators.UsernameAllowedValidator()
+                        ],
                         verbose_name="Имя пользователя",
                     ),
                 ),
-                ("password", models.CharField(max_length=150, verbose_name="Пароль")),
+                (
+                    "password",
+                    models.CharField(max_length=150, verbose_name="Пароль"),
+                ),
                 ("email", models.EmailField(db_index=True, max_length=254)),
                 (
                     "first_name",
-                    models.CharField(db_index=True, max_length=150, verbose_name="Имя"),
+                    models.CharField(
+                        db_index=True, max_length=150, verbose_name="Имя"
+                    ),
                 ),
                 (
                     "last_name",
@@ -88,7 +96,10 @@ class Migration(migrations.Migration):
                 (
                     "role",
                     models.SlugField(
-                        choices=[("user", "пользователь"), ("admin", "администратор")],
+                        choices=[
+                            ("user", "пользователь"),
+                            ("admin", "администратор"),
+                        ],
                         default="user",
                     ),
                 ),

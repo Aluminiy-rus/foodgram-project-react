@@ -72,7 +72,9 @@ class Migration(migrations.Migration):
                 ),
                 (
                     "measurement_unit",
-                    models.CharField(max_length=24, verbose_name="Еденица измерения"),
+                    models.CharField(
+                        max_length=24, verbose_name="Еденица измерения"
+                    ),
                 ),
             ],
             options={
@@ -138,7 +140,10 @@ class Migration(migrations.Migration):
                 (
                     "name",
                     models.CharField(
-                        db_index=True, max_length=200, unique=True, verbose_name="Тег"
+                        db_index=True,
+                        max_length=200,
+                        unique=True,
+                        verbose_name="Тег",
                     ),
                 ),
                 (
