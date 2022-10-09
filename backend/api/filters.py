@@ -2,15 +2,13 @@ from django.contrib.auth import get_user_model
 from django_filters.rest_framework import FilterSet
 from django_filters.rest_framework.filters import (
     AllValuesMultipleFilter,
-    ModelChoiceFilter,
     BooleanFilter,
+    ModelChoiceFilter,
 )
-from rest_framework.serializers import ValidationError
 from rest_framework.filters import SearchFilter
+from rest_framework.serializers import ValidationError
 
-from recipes.models import (
-    Recipe,
-)
+from recipes.models import Recipe
 
 User = get_user_model()
 
@@ -33,18 +31,20 @@ class RecipeFilter(FilterSet):
         ]
 
     def get_is_favorited(self, queryset, name, value):
-        if value is True and self.request.user.is_authenticated:
-            return queryset.filter(favorites__user=self.request.user)
-        elif value is False and self.request.user.is_authenticated:
-            return queryset.exclude(favorites__user=self.request.user)
+        if value and self.request.user.is_authenticated:
+            return queryset.filter(favorite__user=self.request.user)
+        elif not value and self.request.user.is_authenticated:
+            return queryset.exclude(favorite__user=self.request.user)
         else:
             raise ValidationError(
                 "Вы не авторизованы для фильтрации по избранному."
             )
 
     def get_is_in_shopping_cart(self, queryset, name, value):
-        if value is True and self.request.user.is_authenticated:
-            return queryset.filter(cart_recipe__user=self.request.user)
+        if value and self.request.user.is_authenticated:
+            return queryset.filter(shopping_cart__user=self.request.user)
+        elif not value and self.request.user.is_authenticated:
+            return queryset.exclude(shopping_cart__user=self.request.user)
         else:
             raise ValidationError(
                 "Вы не авторизованы для фильтрации по списку покупок."

@@ -10,13 +10,13 @@ class ShoppingCart(models.Model):
     user = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
-        related_name="cart_user",
+        related_name="shopping_cart",
         verbose_name="Пользователь",
     )
     recipe = models.ForeignKey(
         Recipe,
         on_delete=models.CASCADE,
-        related_name="cart_recipe",
+        related_name="shopping_cart",
         verbose_name="Рецепт",
     )
     pub_date = models.DateTimeField(auto_now_add=True)

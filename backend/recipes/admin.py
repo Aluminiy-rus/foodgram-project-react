@@ -1,13 +1,13 @@
-from django.contrib.admin import ModelAdmin, site, TabularInline
+from django.contrib.admin import ModelAdmin, TabularInline, site
 
 from .models import (
     Favorite,
     Follow,
     Ingredient,
     Recipe,
-    Tag,
-    RecipeTag,
     RecipeIngredientAmount,
+    RecipeTag,
+    Tag,
 )
 
 
@@ -100,15 +100,15 @@ class FollowAdmin(ModelAdmin):
 class FavoriteAdmin(ModelAdmin):
     list_display = (
         "user",
-        "favorite",
+        "recipe",
     )
     search_fields = (
         "user",
-        "favorite",
+        "recipe",
     )
     list_filter = (
         "user",
-        "favorite",
+        "recipe",
     )
     empty_value_field = "-пусто-"
 

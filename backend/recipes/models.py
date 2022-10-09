@@ -1,7 +1,7 @@
 from django.db import models
 
-from users.models import User
 from .validators import HexColorValidator
+from users.models import User
 
 
 class Tag(models.Model):
@@ -64,7 +64,7 @@ class Recipe(models.Model):
         User,
         on_delete=models.CASCADE,
         verbose_name="Автор",
-        related_name="recipe_author",
+        related_name="recipes",
         db_index=True,
     )
     name = models.CharField(
@@ -85,7 +85,7 @@ class Recipe(models.Model):
         Ingredient,
         through="RecipeIngredientAmount",
         blank=False,
-        related_name="recipe_ingridients",
+        related_name="recipes",
         verbose_name="Ингредиенты рецепта",
         db_index=True,
         help_text="Необходимые ингредиенты",
@@ -93,7 +93,7 @@ class Recipe(models.Model):
     tags = models.ManyToManyField(
         Tag,
         through="RecipeTag",
-        related_name="tags",
+        related_name="recipes",
         db_index=True,
     )
     cooking_time = models.PositiveSmallIntegerField(
@@ -149,11 +149,13 @@ class RecipeTag(models.Model):
     recipe = models.ForeignKey(
         Recipe,
         on_delete=models.CASCADE,
+        related_name="RecipeTag",
         verbose_name="Рецепт",
     )
     tag = models.ForeignKey(
         Tag,
         on_delete=models.PROTECT,
+        related_name="RecipeTag",
         verbose_name="Тэг",
     )
 
@@ -164,13 +166,13 @@ class Follow(models.Model):
     user = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
-        related_name="follower",
+        related_name="follow_user",
         verbose_name="Подписчик",
     )
     author = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
-        related_name="following",
+        related_name="follow_author",
         verbose_name="Автор рецепта",
     )
 
@@ -191,20 +193,20 @@ class Favorite(models.Model):
     user = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
-        related_name="favorites_user",
+        related_name="favorite",
         verbose_name="Подписчик",
     )
-    favorite = models.ForeignKey(
+    recipe = models.ForeignKey(
         Recipe,
         on_delete=models.CASCADE,
-        related_name="favorites",
+        related_name="favorite",
         verbose_name="Избранный рецепт",
     )
 
     class Meta:
         constraints = [
             models.UniqueConstraint(
-                fields=["user", "favorite"],
+                fields=["user", "recipe"],
                 name="unique_favorites",
             )
         ]
