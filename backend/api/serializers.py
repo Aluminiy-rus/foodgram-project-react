@@ -146,18 +146,18 @@ class RecipeSerializer(ModelSerializer):
     def get_is_in_shopping_cart(self, obj):
         return self._check_fields(ShoppingCart, obj)
 
-    # def validate(self, data):
-    #     ingredients = self.initial_data.get("ingredients")
-    #     ingredients_set = set()
-    #     for ingredient in ingredients:
-    #         if int(ingredient.get("amount")) <= 0:
-    #             raise ValidationError("Кол-во должно быть больше 0")
-    #         pk = ingredient.get("id")
-    #         if pk in ingredients_set:
-    #             raise ValidationError("Не должено быть повторений.")
-    #         ingredients_set.add(pk)
-    #     data["ingredients"] = ingredients
-    #     return data
+    def validate(self, data):
+        ingredients = self.initial_data.get("ingredients")
+        ingredients_set = set()
+        for ingredient in ingredients:
+            if int(ingredient.get("amount")) <= 0:
+                raise ValidationError("Кол-во должно быть больше 0")
+            pk = ingredient.get("id")
+            if pk in ingredients_set:
+                raise ValidationError("Не должено быть повторений.")
+            ingredients_set.add(pk)
+        data["ingredients"] = ingredients
+        return data
 
     def create(self, validated_data):
         tags = self.initial_data.pop("tags")
