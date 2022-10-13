@@ -84,7 +84,6 @@ class Recipe(models.Model):
     ingredients = models.ManyToManyField(
         Ingredient,
         through="RecipeIngredientAmount",
-        blank=False,
         related_name="recipes",
         verbose_name="Ингредиенты рецепта",
         db_index=True,
@@ -128,7 +127,7 @@ class RecipeIngredientAmount(models.Model):
     ingredient = models.ForeignKey(
         Ingredient,
         related_name="recipe_ingredient_amount",
-        on_delete=models.PROTECT,
+        on_delete=models.CASCADE,
         verbose_name="Ингредиент",
     )
     amount = models.PositiveSmallIntegerField(
@@ -140,7 +139,7 @@ class RecipeIngredientAmount(models.Model):
         constraints = [
             models.UniqueConstraint(
                 name="unique_recipe_ingredient_amount",
-                fields=["recipe", "ingredient", "amount"],
+                fields=["recipe", "ingredient"],
             ),
         ]
 

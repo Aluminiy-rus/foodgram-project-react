@@ -42,6 +42,7 @@ class CustomUserViewSet(UserViewSet):
     queryset = User.objects.all()
     pagination_class = ApiPagination
     serializer_class = CustomUserSerializer
+    lookup_field = "id"
 
     @action(
         detail=True,
@@ -90,8 +91,8 @@ class RecipeViewSet(ModelViewSet):
 
     permission_classes = [IsAuthorOrReadOnly]
     queryset = Recipe.objects.all()
-    pagination_class = ApiPagination
     serializer_class = RecipeSerializer
+    pagination_class = ApiPagination
     filter_backends = [DjangoFilterBackend]
     filterset_class = RecipeFilter
 
@@ -149,11 +150,11 @@ class RecipeViewSet(ModelViewSet):
 
         ingredients = (
             RecipeIngredientAmount.objects.filter(
-                recipes__shopping_cart__user=user
+                recipe__shopping_cart__user=user
             )
             .values(
                 ingr_name=F("ingredient__name"),
-                unit=F("ingredients__measurement_unit"),
+                unit=F("ingredient__measurement_unit"),
             )
             .annotate(amount_sum=Sum("amount"))
         )

@@ -48,26 +48,13 @@ class RecipeIngredientsValidator:
         self.ingredients = ingredients
 
     def __call__(self, data):
-        for ingredient in data["ingredients"]:
+        for ingredient in data["recipe_ingredient_amount"]:
             ingredients_set = set()
-            if ingredient <= 0:
+            if ingredient.get("amount") <= 0:
                 message = "Ингредиентов должно быть больше 0."
                 raise ValidationError(message)
-            pk = ingredient.get("pk")
+            pk = ingredient.get("id")
             if pk in ingredients_set:
                 raise ValidationError("Не должено быть повторений.")
             ingredients_set.add(pk)
             return data
-
-    # def validate(self, data):
-    #     ingredients = self.initial_data.get("ingredients")
-    #     ingredients_set = set()
-    #     for ingredient in ingredients:
-    #         if int(ingredient.get("amount")) <= 0:
-    #             raise ValidationError("Кол-во должно быть больше 0")
-    #         id = ingredient.get("id")
-    #         if id in ingredients_set:
-    #             raise ValidationError("Не должено быть повторений.")
-    #         ingredients_set.add(id)
-    #     data["ingredients"] = ingredients
-    #     return data
