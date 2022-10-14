@@ -31,6 +31,8 @@ exclude = [
     '*/migrations/',
     'venv/',
     'env/',
+    'venv/',
+    'env/',
     ]
 per-file-ignores = [
     '*/settings.py:E501',
