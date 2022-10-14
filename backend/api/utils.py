@@ -5,14 +5,6 @@ from django.core.files.base import ContentFile
 from rest_framework import serializers
 
 
-def get_is_subscribed(self, obj):
-    """Проверка статуса подписки"""
-    user = self.context["request"].user
-    return (
-        user.is_authenticated and user.follow_user.filter(author=obj).exists()
-    )
-
-
 class Hex2NameColor(serializers.Field):
     """Hex-color в читабельный вид"""
 

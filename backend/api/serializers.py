@@ -1,10 +1,10 @@
 from django.contrib.auth import get_user_model
 from rest_framework.serializers import (
+    CharField,
+    IntegerField,
     ModelSerializer,
     PrimaryKeyRelatedField,
     SerializerMethodField,
-    CharField,
-    IntegerField,
 )
 from rest_framework.validators import UniqueTogetherValidator
 
@@ -21,8 +21,8 @@ from recipes.models import (
     Follow,
     Ingredient,
     Recipe,
-    RecipeTag,
     RecipeIngredientAmount,
+    RecipeTag,
     Tag,
 )
 
@@ -32,7 +32,7 @@ User = get_user_model()
 class CustomUserSerializer(ModelSerializer):
     """Сериализатор для юзеров"""
 
-    is_subscribed = SerializerMethodField(method_name="get_is_subscribed")
+    is_subscribed = SerializerMethodField()
 
     class Meta:
         model = User
@@ -49,6 +49,11 @@ class CustomUserSerializer(ModelSerializer):
             "last_name",
             "is_subscribed",
         )
+
+    def get_is_subscribed(self, obj):
+        """Проверка статуса подписки"""
+        user = self.context["request"].user
+        return user.is_authenticated and user.follow_user.filter(author=obj).exists()
 
 
 class TagSerializer(ModelSerializer):
@@ -98,6 +103,8 @@ class RecipeIngredientAmountSerializer(ModelSerializer):
 
 
 class RecipeSerializer(ModelSerializer):
+    """Сериализатор для рецептов"""
+
     tags = TagSerializer(many=True, read_only=True)
     author = CustomUserSerializer(read_only=True)
     is_favorited = SerializerMethodField()
@@ -171,9 +178,7 @@ class RecipeSerializer(ModelSerializer):
         super().update(validated_data=validated_data, instance=instance)
         RecipeIngredientAmount.objects.filter(recipe=instance).delete()
         RecipeTag.objects.filter(recipe=instance).delete()
-        return self._create_or_update(
-            recipe=instance, data_ingredients=context
-        )
+        return self._create_or_update(recipe=instance, data_ingredients=context)
 
     def to_representation(self, instance):
         response = super(RecipeSerializer, self).to_representation(instance)
@@ -216,10 +221,9 @@ class RepresentationRecipeSerializer(ModelSerializer):
         )
 
 
-class SubscriptionsSerializer(ModelSerializer):
+class SubscriptionsSerializer(CustomUserSerializer):
     """Сериализатор для подписок"""
 
-    is_subscribed = SerializerMethodField(method_name="get_is_subscribed")
     recipes = RepresentationRecipeSerializer(many=True)
     recipes_count = SerializerMethodField()
 
