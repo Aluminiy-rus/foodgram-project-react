@@ -36,7 +36,9 @@ class RecipeFilter(FilterSet):
         elif not value and self.request.user.is_authenticated:
             return queryset.exclude(favorite__user=self.request.user)
         else:
-            raise ValidationError("Вы не авторизованы для фильтрации по избранному.")
+            raise ValidationError(
+                "Вы не авторизованы для фильтрации по избранному."
+            )
 
     def get_is_in_shopping_cart(self, queryset, name, value):
         if value and self.request.user.is_authenticated:

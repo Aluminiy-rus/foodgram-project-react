@@ -53,7 +53,10 @@ class CustomUserSerializer(ModelSerializer):
     def get_is_subscribed(self, obj):
         """Проверка статуса подписки"""
         user = self.context["request"].user
-        return user.is_authenticated and user.follow_user.filter(author=obj).exists()
+        return (
+            user.is_authenticated
+            and user.follow_user.filter(author=obj).exists()
+        )
 
 
 class TagSerializer(ModelSerializer):
@@ -178,7 +181,9 @@ class RecipeSerializer(ModelSerializer):
         super().update(validated_data=validated_data, instance=instance)
         RecipeIngredientAmount.objects.filter(recipe=instance).delete()
         RecipeTag.objects.filter(recipe=instance).delete()
-        return self._create_or_update(recipe=instance, data_ingredients=context)
+        return self._create_or_update(
+            recipe=instance, data_ingredients=context
+        )
 
     def to_representation(self, instance):
         response = super(RecipeSerializer, self).to_representation(instance)

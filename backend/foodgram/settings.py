@@ -28,7 +28,7 @@ INSTALLED_APPS = [
     "cart",
     "recipes",
     "users",
-    "for_build"
+    "for_build",
 ]
 
 MIDDLEWARE = [

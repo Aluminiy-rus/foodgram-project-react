@@ -57,10 +57,14 @@ class CustomUserViewSet(UserViewSet):
                 "user": user.id,
                 "author": author.id,
             }
-            serializer = SubscribeSerializer(data=data, context={"request": request})
+            serializer = SubscribeSerializer(
+                data=data, context={"request": request}
+            )
             serializer.is_valid(raise_exception=True)
             serializer.save()
-            serializer = SubscriptionsSerializer(author, context={"request": request})
+            serializer = SubscriptionsSerializer(
+                author, context={"request": request}
+            )
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         else:
             subscribe = get_object_or_404(Follow, user=user, author=author)
@@ -145,7 +149,9 @@ class RecipeViewSet(ModelViewSet):
         filename = f"{user.username}_shopping_cart.txt"
 
         ingredients = (
-            RecipeIngredientAmount.objects.filter(recipe__shopping_cart__user=user)
+            RecipeIngredientAmount.objects.filter(
+                recipe__shopping_cart__user=user
+            )
             .values(
                 ingr_name=F("ingredient__name"),
                 unit=F("ingredient__measurement_unit"),
@@ -158,7 +164,9 @@ class RecipeViewSet(ModelViewSet):
                 f'{ingr["ingr_name"]}: {ingr["amount_sum"]} {ingr["unit"]}\n'
             )
 
-        response = HttpResponse(shopping_list, content_type="text.txt; charset=utf-8")
+        response = HttpResponse(
+            shopping_list, content_type="text.txt; charset=utf-8"
+        )
         response["Content-Disposition"] = f"attachment; filename={filename}"
         return response
 
