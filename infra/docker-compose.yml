@@ -10,7 +10,7 @@ services:
       - ./.env
 
   backend:
-    image: 
+    image: aluminiy/backend:lastest
     restart: always
     volumes:
       - static_value:/app/static/
@@ -28,7 +28,7 @@ services:
       - db
 
   frontend:
-    image: 
+    image: aluminiy/frontend:lastest
     volumes:
       - ../frontend/:/app/result_build/
     depends_on:
