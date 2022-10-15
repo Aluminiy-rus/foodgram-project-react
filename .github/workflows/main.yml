@@ -69,6 +69,7 @@ jobs:
             sudo docker-compose stop
             sudo docker rm adm-vm_backend_1
             sudo docker rm adm-vm_frontend_1
+            cd nginx/
             touch .env
             echo DB_ENGINE=${{ secrets.DB_ENGINE }} >> .env
             echo DB_NAME=${{ secrets.DB_NAME }} >> .env
@@ -77,6 +78,7 @@ jobs:
             echo DB_HOST=${{ secrets.DB_HOST }} >> .env
             echo DB_PORT=${{ secrets.DB_PORT }} >> .env
             echo SECRET_KEY=${{ secrets.SECRET_KEY }} >> .env
+            cd ..
             sudo docker-compose up -d
 
   send_message:
