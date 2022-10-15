@@ -67,8 +67,6 @@ jobs:
           passphrase: ${{ secrets.PASSPHRASE }}
           script: |
             sudo docker-compose stop
-            sudo docker pull ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_BACKEND_REPONAME }}:latest
-            sudo docker pull ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_FRONTEND_REPONAME }}:latest
             sudo docker rm backend
             sudo docker rm frontend
             touch .env
