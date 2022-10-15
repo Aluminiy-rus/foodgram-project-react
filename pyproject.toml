@@ -25,12 +25,11 @@ known_local_folder = [
 ignore = [
     'W503',
     'E501',
+    'R504'
     ]
 exclude = [
     'tests/',
     '*/migrations/',
-    'venv/',
-    'env/',
     'venv/',
     'env/',
     ]
