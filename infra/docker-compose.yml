@@ -7,7 +7,7 @@ services:
     volumes:
       - /var/lib/postgresql/data/
     env_file:
-      - ./.env
+      - ./nginx/.env
 
   backend:
     image: aluminiy/backend:latest
