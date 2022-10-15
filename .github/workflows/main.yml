@@ -69,6 +69,8 @@ jobs:
             sudo docker-compose stop
             sudo docker rm adm-vm_backend_1
             sudo docker rm adm-vm_frontend_1
+            sudo docker rmi ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_BACKEND_REPONAME }}:latest
+            sudo docker rmi ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_FRONTEND_REPONAME }}:latest
             cd nginx/
             touch .env
             echo DB_ENGINE=${{ secrets.DB_ENGINE }} >> .env
