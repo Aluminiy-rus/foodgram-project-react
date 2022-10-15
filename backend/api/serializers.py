@@ -1,5 +1,6 @@
 from django.contrib.auth import get_user_model
 from rest_framework.serializers import (
+    Serializer,
     CharField,
     IntegerField,
     ModelSerializer,
@@ -29,10 +30,20 @@ from recipes.models import (
 User = get_user_model()
 
 
-class CustomUserSerializer(ModelSerializer):
+class IsSubscribedSerializer(Serializer):
+    def get_is_subscribed(self, obj):
+        """Проверка статуса подписки"""
+        user = self.context["request"].user
+        return (
+            user.is_authenticated
+            and user.follow_user.filter(author=obj).exists()
+        )
+
+
+class CustomUserSerializer(ModelSerializer, IsSubscribedSerializer):
     """Сериализатор для юзеров"""
 
-    is_subscribed = SerializerMethodField()
+    is_subscribed = SerializerMethodField(method_name="get_is_subscribed")
 
     class Meta:
         model = User
@@ -48,14 +59,6 @@ class CustomUserSerializer(ModelSerializer):
             "first_name",
             "last_name",
             "is_subscribed",
-        )
-
-    def get_is_subscribed(self, obj):
-        """Проверка статуса подписки"""
-        user = self.context["request"].user
-        return (
-            user.is_authenticated
-            and user.follow_user.filter(author=obj).exists()
         )
 
 
@@ -226,10 +229,11 @@ class RepresentationRecipeSerializer(ModelSerializer):
         )
 
 
-class SubscriptionsSerializer(CustomUserSerializer):
+class SubscriptionsSerializer(ModelSerializer, IsSubscribedSerializer):
     """Сериализатор для подписок"""
 
-    recipes = RepresentationRecipeSerializer(many=True)
+    is_subscribed = SerializerMethodField(method_name="get_is_subscribed")
+    recipes = SerializerMethodField()
     recipes_count = SerializerMethodField()
 
     class Meta:
@@ -244,6 +248,14 @@ class SubscriptionsSerializer(CustomUserSerializer):
             "recipes",
             "recipes_count",
         )
+
+    def get_recipes(self, obj):
+        request = self.context.get("request")
+        limit = request.GET.get("recipes_limit")
+        queryset = Recipe.objects.filter(author=obj)
+        if limit is not None:
+            queryset = Recipe.objects.filter(author=obj)[: int(limit)]
+        return RecipeSerializer(queryset, many=True).data
 
     def get_recipes_count(self, obj):
         return Recipe.objects.filter(author=obj).count()
