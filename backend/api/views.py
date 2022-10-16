@@ -78,7 +78,7 @@ class CustomUserViewSet(UserViewSet):
     )
     def subscriptions(self, request):
         user = self.request.user
-        queryset = User.objects.filter(follow_author__user=user).order_by("id")
+        queryset = User.objects.filter(follow_author__user=user)
         paginated_follow = self.paginate_queryset(queryset=queryset)
         serializer = SubscriptionsSerializer(
             paginated_follow, many=True, context={"request": request}
@@ -95,6 +95,7 @@ class RecipeViewSet(ModelViewSet):
     pagination_class = ApiPagination
     filter_backends = [DjangoFilterBackend]
     filterset_class = RecipeFilter
+    ordering = ("id",)
 
     def perform_create(self, serializer):
         return serializer.save(author=self.request.user)
