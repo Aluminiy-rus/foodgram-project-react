@@ -10,8 +10,7 @@ services:
       - ./nginx/.env
 
   backend:
-    # image: aluminiy/backend:latest
-    build: backend
+    image: aluminiy/backend:latest
     restart: always
     volumes:
       - static_value:/app/static/
