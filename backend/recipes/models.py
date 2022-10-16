@@ -182,7 +182,6 @@ class Follow(models.Model):
                 name="unique_follow",
             )
         ]
-        ordering = ["author"]
         verbose_name = "Подписка"
         verbose_name_plural = "Подписки"
 

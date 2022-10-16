@@ -255,7 +255,7 @@ class SubscriptionsSerializer(ModelSerializer, IsSubscribedSerializer):
         queryset = Recipe.objects.filter(author=obj)
         if limit is not None:
             queryset = Recipe.objects.filter(author=obj)[: int(limit)]
-        return RecipeSerializer(queryset, many=True).data
+        return RepresentationRecipeSerializer(queryset, many=True).data
 
     def get_recipes_count(self, obj):
         return Recipe.objects.filter(author=obj).count()
