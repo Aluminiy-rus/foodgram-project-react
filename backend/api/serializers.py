@@ -33,10 +33,10 @@ User = get_user_model()
 class IsSubscribedSerializer(Serializer):
     def get_is_subscribed(self, obj):
         """Проверка статуса подписки"""
-        # user = self.context.get("request").user
+        user = self.context.get("request").user
         return (
-            # user.is_authenticated
-            and Follow.objects.filter(user=user, author=obj).exists()
+            user.is_authenticated
+            and user.follow_user.filter(author=obj).exists()
         )
 
 
@@ -196,7 +196,7 @@ class RecipeSerializer(ModelSerializer):
 class SubscribeSerializer(ModelSerializer):
     """Сериализатор для создания и удаления подписок"""
 
-    queryset = User.objects.all().order_by("id")
+    queryset = User.objects.all()
     user = PrimaryKeyRelatedField(queryset=queryset)
     author = PrimaryKeyRelatedField(queryset=queryset)
 
