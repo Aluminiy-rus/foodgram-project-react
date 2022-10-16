@@ -196,7 +196,7 @@ class RecipeSerializer(ModelSerializer):
 class SubscribeSerializer(ModelSerializer):
     """Сериализатор для создания и удаления подписок"""
 
-    queryset = User.objects.all().order_by('id')
+    queryset = User.objects.all().order_by("id")
     user = PrimaryKeyRelatedField(queryset=queryset)
     author = PrimaryKeyRelatedField(queryset=queryset)
 
