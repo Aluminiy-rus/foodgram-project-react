@@ -4,7 +4,7 @@
 ![example workflow](https://github.com/Aluminiy-rus/foodgram-project-react/actions/workflows/yamdb_workflow.yml/badge.svg)
 
 
-На данный момент(5.09.2022) посмотреть доступные эндпойнты проекта можно по адресу http://84.201.159.93/redoc/
+На данный момент(16.10.2022) посмотреть доступные эндпойнты проекта можно по адресу http://178.154.220.213/doc/
 
 ---
 
@@ -40,7 +40,7 @@ sudo apt install docker.io
 
 4. Установите docker-compose, с этим вам поможет официальная документация https://docs.docker.com/compose/install/
 
-5. Скопируйте файлы docker-compose.yaml и nginx/default.conf из проекта на сервер в home/<ваш_username>/docker-compose.yaml и home/<ваш_username>/nginx/default.conf соответственно.
+5. Скопируйте файлы docker-compose.yml и nginx/nginx.conf из проекта на сервер в home/<ваш_username>/docker-compose.yml и home/<ваш_username>/nginx/default.conf соответственно.
 
 6. Добавьте в GitHub Actions Secrets переменные для подключения к серверу:
 ```
