@@ -158,7 +158,7 @@ class RecipeViewSet(ModelViewSet):
             )
             .annotate(amount_sum=Sum("amount"))
         )
-        shopping_list = ()
+        shopping_list = list()
         for ingr in ingredients:
             shopping_list += (
                 f'{ingr["ingr_name"]}: {ingr["amount_sum"]} {ingr["unit"]}\n'
