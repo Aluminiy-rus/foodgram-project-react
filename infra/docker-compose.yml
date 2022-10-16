@@ -11,7 +11,6 @@ services:
 
   backend:
     image: aluminiy/backend:latest
-    # build: ../backend
     restart: always
     volumes:
       - static_value:/app/static/
