@@ -1,7 +1,7 @@
 from django.contrib.auth import get_user_model
 from django.db.models import F, Sum
 from django.http.response import HttpResponse
-from django_filters.rest_framework import DjangoFilterBackend, OrderingFilter
+from django_filters.rest_framework import DjangoFilterBackend
 from djoser.views import UserViewSet
 from rest_framework import status
 from rest_framework.decorators import action
@@ -93,9 +93,8 @@ class RecipeViewSet(ModelViewSet):
     queryset = Recipe.objects.all()
     serializer_class = RecipeSerializer
     pagination_class = ApiPagination
-    filter_backends = [DjangoFilterBackend, OrderingFilter]
+    filter_backends = [DjangoFilterBackend]
     filterset_class = RecipeFilter
-    ordering = ["id"]
 
     def perform_create(self, serializer):
         return serializer.save(author=self.request.user)
