@@ -58,3 +58,16 @@ class RecipeIngredientsValidator:
             if ingr_set.count(pk) > 1:
                 raise ValidationError("Не должено быть повторений.")
         return data
+
+
+class RecipeCookingTimeValidator:
+    """Проверка времени готовки в рецептах"""
+
+    def __init__(self, cooking_time):
+        self.cooking_time = cooking_time
+
+    def __call__(self, data):
+        if data["cooking_time"] <= 0:
+            message = "Время готовки должно быть больше 0."
+            raise ValidationError(message)
+        return data

@@ -15,6 +15,7 @@ from .validators import (
     RecipeIngredientsValidator,
     UsernameAllowedValidator,
     UserNotAuthorValidator,
+    RecipeCookingTimeValidator,
 )
 from cart.models import ShoppingCart
 from recipes.models import (
@@ -126,6 +127,7 @@ class RecipeSerializer(ModelSerializer):
     class Meta:
         model = Recipe
         validators = [
+            RecipeCookingTimeValidator(cooking_time="cooking_time"),
             RecipeIngredientsValidator(ingredients="ingredients"),
         ]
         fields = (
