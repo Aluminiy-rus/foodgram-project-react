@@ -1,10 +1,4 @@
-# praktikum_new_diplom
-# yamdb_final
-
-![example workflow](https://github.com/Aluminiy-rus/foodgram-project-react/actions/workflows/yamdb_workflow.yml/badge.svg)
-
-
-На данный момент(16.10.2022) посмотреть доступные эндпойнты проекта можно по адресу http://178.154.220.213/doc/
+# foodgram-project-react
 
 ---
 
